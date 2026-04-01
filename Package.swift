@@ -14,6 +14,10 @@ let package = Package(
             name: "SwiftSynapseHarness",
             targets: ["SwiftSynapseHarness"]
         ),
+        .library(
+            name: "SwiftSynapseUI",
+            targets: ["SwiftSynapseUI"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/RichNasz/SwiftSynapseMacros", branch: "main"),
@@ -27,6 +31,11 @@ let package = Package(
                 .product(name: "SwiftOpenSkills", package: "SwiftOpenSkills"),
                 .product(name: "SwiftOpenSkillsResponses", package: "SwiftOpenSkills"),
             ]
+        ),
+        .target(
+            name: "SwiftSynapseUI",
+            dependencies: ["SwiftSynapseHarness"],
+            path: "Sources/SwiftSynapseUI"
         ),
         .testTarget(
             name: "SwiftSynapseHarnessTests",

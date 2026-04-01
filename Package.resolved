@@ -1,5 +1,5 @@
 {
-  "originHash" : "f66c3e3ab88f390408809a94655429df1f366313052254b1c0fe730a6d9b1eb9",
+  "originHash" : "c3acbc124a6c19a04f0b82cb92035d9ddd9babe8b791b3b08b28c8981d0be969",
   "pins" : [
     {
       "identity" : "swift-syntax",
@@ -52,7 +52,7 @@
       "location" : "https://github.com/RichNasz/SwiftSynapseMacros",
       "state" : {
         "branch" : "main",
-        "revision" : "838a925ef3f31f5e9819d14daecb62cf17567be9"
+        "revision" : "e95fed65e92cd2f3f8dba2770a4602eda59a8bff"
       }
     },
     {

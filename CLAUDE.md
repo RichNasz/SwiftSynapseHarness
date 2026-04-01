@@ -13,9 +13,10 @@ Re-exports `SwiftSynapseMacrosClient` so users only need `import SwiftSynapseHar
 
 ## Architecture
 
-### Single Target
+### Two Products, Two Targets
 
-**SwiftSynapseHarness** — all harness files in one library target.
+- **SwiftSynapseHarness** — core harness library (no SwiftUI dependency)
+- **SwiftSynapseUI** — SwiftUI + AppIntents views for any `ObservableAgent` (separate product/target)
 
 ### File Categories
 
@@ -34,6 +35,18 @@ Re-exports `SwiftSynapseMacrosClient` so users only need `import SwiftSynapseHar
 | Polish | `CostTracking.swift`, `ErrorClassification.swift`, `ResultTruncation.swift`, `RateLimiting.swift`, `SystemPromptBuilder.swift`, `TestFixtures.swift`, `GracefulShutdown.swift`, `AgentMemory.swift`, `ConversationRecovery.swift` | Operational polish |
 | Skills | `SkillsSupport.swift` | SwiftOpenSkills integration |
 | Exports | `Exports.swift` | `@_exported import SwiftSynapseMacrosClient` |
+
+### SwiftSynapseUI Files (`Sources/SwiftSynapseUI/`)
+
+| File | Purpose |
+|------|---------|
+| `ObservableAgent.swift` | Protocol for `@SpecDrivenAgent` actors |
+| `AgentAppIntent.swift` | Base protocol for App Intents |
+| `AgentStatusView.swift` | Status icon + label view |
+| `AgentChatView.swift` | Complete drop-in chat UI |
+| `TranscriptView.swift` | Chat-style transcript list |
+| `StreamingTextView.swift` | Animated streaming text with cursor |
+| `ToolCallDetailView.swift` | Expandable tool call details |
 
 ### Key Design Decisions
 
