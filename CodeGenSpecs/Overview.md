@@ -12,6 +12,7 @@ This directory contains the specifications that serve as the single source of tr
 | [Client-AgentHarness.md](Client-AgentHarness.md) | `AgentToolProtocol.swift`, `ToolRegistry.swift`, `AgentToolLoop.swift`, `StreamingToolExecutor.swift`, `AgentHook.swift`, `AgentHookPipeline.swift`, `Permission.swift`, `ToolListPolicy.swift`, `AgentLLMClient.swift`, `AgentConfiguration.swift`, `AgentSession.swift`, `RetryWithBackoff.swift`, `RecoveryStrategy.swift`, `ContextBudget.swift`, `Telemetry.swift`, `TelemetrySinks.swift`, `SubagentContext.swift`, `ToolProgress.swift`, `SkillsSupport.swift` |
 | [Client-Production.md](Client-Production.md) | `SessionPersistence.swift`, `Guardrails.swift`, `MCP.swift`, `ContextCompression.swift`, `ConfigurationHierarchy.swift`, `Caching.swift`, `DenialTracking.swift`, `AgentCoordination.swift`, `PluginSystem.swift` |
 | [Client-ProductionPolish.md](Client-ProductionPolish.md) | `CostTracking.swift`, `ErrorClassification.swift`, `ResultTruncation.swift`, `RateLimiting.swift`, `SystemPromptBuilder.swift`, `TestFixtures.swift`, `GracefulShutdown.swift`, `AgentMemory.swift`, `ConversationRecovery.swift` |
+| [Tests.md](Tests.md) | `Tests/SwiftSynapseHarnessTests/AgentConfigurationTests.swift`, `RetryAndContextTests.swift`, `ToolSystemTests.swift`, `SessionAndTranscriptTests.swift`, `HooksAndGuardrailsTests.swift`, `ProductionPolishTests.swift`, `AgentRuntimeTests.swift` |
 
 ## Infrastructure Files
 

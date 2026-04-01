@@ -28,5 +28,10 @@ let package = Package(
                 .product(name: "SwiftOpenSkillsResponses", package: "SwiftOpenSkills"),
             ]
         ),
+        .testTarget(
+            name: "SwiftSynapseHarnessTests",
+            dependencies: ["SwiftSynapseHarness"],
+            path: "Tests/SwiftSynapseHarnessTests"
+        ),
     ]
 )
