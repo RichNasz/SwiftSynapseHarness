@@ -17,6 +17,20 @@ SwiftSynapseHarness is the orchestration layer for the [SwiftSynapse](https://gi
 
 Designed for **business agents** — customer support, data processing, workflow automation — but general-purpose enough for any AI agent.
 
+## Documentation
+
+The full documentation is available as DocC via two paths:
+
+**[Browse on GitHub Pages](https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseharness/)** — no Xcode required. Deployed automatically on push to `main`.
+
+**Xcode Developer Documentation** — richest experience during development:
+
+1. Open this project (or any project that depends on it) in Xcode.
+2. Choose **Product > Build Documentation** (or open the Documentation window).
+3. Navigate to **SwiftSynapseHarness** in the documentation navigator.
+
+Both paths cover all guides and API reference. The README covers installation and orientation only.
+
 ## Requirements
 
 - Swift 6.2+
