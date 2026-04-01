@@ -258,3 +258,11 @@ let telemetry = CompositeTelemetrySink([
 ## Spec-Driven Development
 
 All `.swift` files are generated from specs in `CodeGenSpecs/`. To change behavior: edit the spec, regenerate, never edit generated files directly. See [CodeGenSpecs/Overview.md](CodeGenSpecs/Overview.md).
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the spec-first workflow, commit conventions, and PR standards.
+
+## License
+
+SwiftSynapseHarness is available under the Apache License 2.0.
