@@ -4,56 +4,50 @@ Define a typed tool, register it, and wire it into the tool loop.
 
 ## Overview
 
-Tools are how agents interact with external systems. Each tool has typed `Input` and `Output`, a name, a description, and an `execute(input:)` method. This guide walks through building a tool from scratch, registering it, and optionally adding progress reporting for long-running work.
+Tools are how agents interact with external systems. Annotate your struct with `@LLMTool` and conform to ``AgentLLMTool`` — the macro generates the name (snake_cased), description (from the doc comment), and JSON Schema automatically.
 
-## Step 1: Conform to AgentToolProtocol
-
-Every tool provides typed `Input` and `Output` structs, a `name`, a `description`, an `inputSchema`, and an `execute(input:)` method:
+## Define a Tool
 
 ```swift
-struct SearchDocsTool: AgentToolProtocol {
-    struct Input: Codable, Sendable {
-        let query: String
-        let maxResults: Int
-    }
-    struct Output: Codable, Sendable {
-        let results: [String]
+/// Searches documentation for a query.
+@LLMTool
+struct SearchDocsTool: AgentLLMTool {
+    @LLMToolArguments
+    struct Arguments {
+        @LLMToolGuide(description: "The search query")
+        var query: String
+
+        @LLMToolGuide(description: "Maximum results to return", .range(1...50))
+        var maxResults: Int
     }
 
-    static let name = "search_docs"
-    static let description = "Searches documentation for a query."
-    static let inputSchema: FunctionToolParam = .init(
-        name: name,
-        description: description,
-        parameters: .init(
-            properties: [
-                "query": .init(type: "string", description: "The search query"),
-                "maxResults": .init(type: "integer", description: "Maximum results to return")
-            ],
-            required: ["query"]
-        )
-    )
-
-    func execute(input: Input) async throws -> Output {
-        let results = try await DocumentationIndex.search(input.query, limit: input.maxResults)
-        return Output(results: results)
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        let results = try await DocumentationIndex.search(arguments.query, limit: arguments.maxResults)
+        return ToolOutput(content: results.joined(separator: "\n"))
     }
 }
 ```
 
-## Step 2: Mark Concurrency Safety
-
-If your tool has no shared mutable state, mark it concurrency-safe. This enables parallel execution with other safe tools during streaming — improving throughput significantly when the agent calls multiple tools in one turn:
+Register and use the tool:
 
 ```swift
-static let isConcurrencySafe = true
+let tools = ToolRegistry()
+tools.register(SearchDocsTool())
 ```
 
-Tools that access shared resources, databases, or external state with ordering requirements should leave this as the default (`false`).
+To enable parallel execution with other safe tools during streaming, override the concurrency default:
 
-## Step 3: Register the Tool
+```swift
+@LLMTool
+struct PureComputeTool: AgentLLMTool {
+    // ...
+    static var isConcurrencySafe: Bool { true }
+}
+```
 
-Register tools in a ``ToolRegistry`` before passing it to ``AgentToolLoop``:
+Tools with shared mutable state, database access, or ordering requirements should leave `isConcurrencySafe` at the default (`false`).
+
+Register multiple tools in a ``ToolRegistry`` before passing it to ``AgentToolLoop``:
 
 ```swift
 let tools = ToolRegistry()
@@ -64,7 +58,7 @@ tools.register(ConvertUnitTool())
 
 The registry handles type erasure via `AnyAgentTool` internally. You never interact with `AnyAgentTool` directly.
 
-## Step 4: Report Progress (Optional)
+## Report Progress (Optional)
 
 For long-running tools, conform to ``ProgressReportingTool`` instead of ``AgentToolProtocol`` to emit intermediate progress. This variant of `execute` receives a `callId` and a ``ToolProgressDelegate``:
 
@@ -98,4 +92,5 @@ Progress updates appear in `ObservableTranscript.toolProgress` for real-time Swi
 ## See Also
 
 - <doc:AgentHarnessGuide> — typed tool system, batch dispatch, ``StreamingToolExecutor``
+- ``AgentLLMTool`` — the protocol for defining tools with `@LLMTool`
 - <doc:HowToConfigurePermissions> — restrict which tools an agent can call

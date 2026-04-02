@@ -36,35 +36,26 @@ import SwiftSynapseHarness
 
 ## Step 2: Define Your First Tool
 
-Tools conform to ``AgentToolProtocol`` with typed `Input` and `Output`:
+The fastest way to define a tool is with `@LLMTool` and ``AgentLLMTool``. The macro generates the name (snake_cased), description (from the doc comment), and JSON Schema automatically:
 
 ```swift
-struct GetWeatherTool: AgentToolProtocol {
-    struct Input: Codable, Sendable {
-        let city: String
-    }
-    struct Output: Codable, Sendable {
-        let temperature: Double
-        let condition: String
+/// Gets current weather for a city.
+@LLMTool
+struct GetWeatherTool: AgentLLMTool {
+    @LLMToolArguments
+    struct Arguments {
+        @LLMToolGuide(description: "The city name")
+        var city: String
     }
 
-    static let name = "get_weather"
-    static let description = "Gets current weather for a city."
-    static let inputSchema: FunctionToolParam = .init(
-        name: name,
-        description: description,
-        parameters: .init(
-            properties: ["city": .init(type: "string", description: "The city name")],
-            required: ["city"]
-        )
-    )
-
-    func execute(input: Input) async throws -> Output {
+    func call(arguments: Arguments) async throws -> ToolOutput {
         // Your actual implementation here
-        return Output(temperature: 22.5, condition: "Sunny")
+        ToolOutput(content: "{\"temperature\": 22.5, \"condition\": \"Sunny\"}")
     }
 }
 ```
+
+For tools that need to emit intermediate progress updates, see <doc:HowToAddTools>.
 
 ## Step 3: Configure the Agent
 

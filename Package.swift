@@ -22,6 +22,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/RichNasz/SwiftSynapseMacros", branch: "main"),
         .package(url: "https://github.com/RichNasz/SwiftOpenSkills", branch: "main"),
+        .package(url: "https://github.com/RichNasz/SwiftLLMToolMacros", branch: "main"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
@@ -31,6 +32,7 @@ let package = Package(
                 .product(name: "SwiftSynapseMacrosClient", package: "SwiftSynapseMacros"),
                 .product(name: "SwiftOpenSkills", package: "SwiftOpenSkills"),
                 .product(name: "SwiftOpenSkillsResponses", package: "SwiftOpenSkills"),
+                .product(name: "SwiftLLMToolMacros", package: "SwiftLLMToolMacros"),
             ]
         ),
         .target(

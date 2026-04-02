@@ -24,50 +24,33 @@ Tagline: Define a typed tool, register it, and wire it into the tool loop.
 
 ### Steps
 
-#### Step 1: Conform to AgentToolProtocol
+#### Step 1: Define a Tool
 
-Every tool has a typed `Input`, typed `Output`, a `name`, a `description`, an `inputSchema`, and an `execute(input:)` method:
+Use `@LLMTool` and `AgentLLMTool`. The macro synthesizes `name` (snake_cased), `description` (doc comment), and JSON Schema. Default implementations on `AgentLLMTool` provide `inputSchema`, `isConcurrencySafe`, and `execute(input:)` — you only implement `call(arguments:)`:
 
 ```swift
-struct SearchDocsTool: AgentToolProtocol {
-    struct Input: Codable, Sendable {
-        let query: String
-        let maxResults: Int
-    }
-    struct Output: Codable, Sendable {
-        let results: [String]
+/// Searches documentation for a query.
+@LLMTool
+struct SearchDocsTool: AgentLLMTool {
+    @LLMToolArguments
+    struct Arguments {
+        @LLMToolGuide(description: "The search query")
+        var query: String
+
+        @LLMToolGuide(description: "Max results", .range(1...50))
+        var maxResults: Int
     }
 
-    static let name = "search_docs"
-    static let description = "Searches documentation for a query."
-    static let inputSchema: FunctionToolParam = .init(
-        name: name,
-        description: description,
-        parameters: .init(
-            properties: [
-                "query": .init(type: "string", description: "The search query"),
-                "maxResults": .init(type: "integer", description: "Maximum number of results")
-            ],
-            required: ["query"]
-        )
-    )
-
-    func execute(input: Input) async throws -> Output {
-        let results = try await DocumentationIndex.search(input.query, limit: input.maxResults)
-        return Output(results: results)
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        let results = try await DocumentationIndex.search(arguments.query, limit: arguments.maxResults)
+        return ToolOutput(content: results.joined(separator: "\n"))
     }
 }
 ```
 
-#### Step 2: Mark Concurrency Safety
+To enable parallel execution with other concurrency-safe tools, add `static var isConcurrencySafe: Bool { true }` to the struct body.
 
-If your tool has no shared mutable state, mark it concurrency-safe. This enables parallel execution with other safe tools during streaming:
-
-```swift
-static let isConcurrencySafe = true
-```
-
-#### Step 3: Register the Tool
+#### Step 2: Register the Tool
 
 Register tools in a `ToolRegistry` before passing it to `AgentToolLoop`:
 
@@ -78,7 +61,7 @@ tools.register(CalculateTool())
 tools.register(ConvertUnitTool())
 ```
 
-#### Step 4: Report Progress (Optional)
+#### Step 3: Report Progress (Optional)
 
 For long-running tools, conform to `ProgressReportingTool` instead of `AgentToolProtocol` to emit intermediate progress:
 
@@ -105,6 +88,7 @@ Progress updates appear in `ObservableTranscript.toolProgress` for real-time Swi
 ### See Also
 
 - `<doc:AgentHarnessGuide>` — typed tool system, batch dispatch, StreamingToolExecutor
+- `AgentLLMTool` — the protocol for defining tools with `@LLMTool`
 - `<doc:HowToConfigurePermissions>` — restrict which tools an agent can call
 
 ---

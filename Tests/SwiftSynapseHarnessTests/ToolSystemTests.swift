@@ -5,75 +5,65 @@ import SwiftSynapseHarness
 
 // MARK: - Mock Tools
 
-private struct EchoTool: AgentToolProtocol {
-    struct Input: Codable, Sendable { let text: String }
-    typealias Output = String
-
-    static let name = "echo"
-    static let description = "Echoes input text"
-    static var inputSchema: FunctionToolParam {
-        FunctionToolParam(
-            name: name,
-            description: description,
-            parameters: .object(
-                properties: [("text", .string(description: "Text to echo"))],
-                required: ["text"]
-            ),
-            strict: true
-        )
+private struct MockLLMTool: AgentLLMTool {
+    struct Arguments: LLMToolArguments {
+        let message: String
+        static var jsonSchema: JSONSchemaValue {
+            .object(
+                properties: [("message", .string(description: "A test message"))],
+                required: ["message"]
+            )
+        }
     }
-    func execute(input: Input) async throws -> String { input.text }
+
+    static var name: String { "mock_llm_tool" }
+    static var description: String { "A mock tool for testing AgentLLMTool." }
+    static var toolDefinition: ToolDefinition {
+        ToolDefinition(name: name, description: description, parameters: Arguments.jsonSchema)
+    }
+
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        ToolOutput(content: "echo:\(arguments.message)")
+    }
 }
 
-private struct ConcurrentEchoTool: AgentToolProtocol {
-    struct Input: Codable, Sendable { let text: String }
-    typealias Output = String
-
-    static let name = "concurrentEcho"
-    static let description = "Concurrent-safe echo"
-    static let isConcurrencySafe = true
-    static var inputSchema: FunctionToolParam {
-        FunctionToolParam(
-            name: name,
-            description: description,
-            parameters: .object(
-                properties: [("text", .string(description: "Text"))],
-                required: ["text"]
-            ),
-            strict: true
-        )
+private struct ConcurrentMockLLMTool: AgentLLMTool {
+    struct Arguments: LLMToolArguments {
+        let value: String
+        static var jsonSchema: JSONSchemaValue {
+            .object(
+                properties: [("value", .string(description: "A value"))],
+                required: ["value"]
+            )
+        }
     }
-    func execute(input: Input) async throws -> String { input.text }
+
+    static var name: String { "concurrent_mock_llm_tool" }
+    static var description: String { "A concurrent-safe mock LLM tool." }
+    static var isConcurrencySafe: Bool { true }
+    static var toolDefinition: ToolDefinition {
+        ToolDefinition(name: name, description: description, parameters: Arguments.jsonSchema)
+    }
+
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        ToolOutput(content: arguments.value)
+    }
 }
 
 // MARK: - ToolRegistry Tests
 
 @Test func toolRegistryRegistersAndListsDefinitions() {
     let registry = ToolRegistry()
-    registry.register(EchoTool())
+    registry.register(MockLLMTool())
     #expect(registry.definitions().count == 1)
-    #expect(registry.toolNames.contains("echo"))
+    #expect(registry.toolNames.contains("mock_llm_tool"))
 }
 
 @Test func toolRegistryIsNotEmptyAfterRegister() {
     let registry = ToolRegistry()
     #expect(registry.isEmpty == true)
-    registry.register(EchoTool())
+    registry.register(MockLLMTool())
     #expect(registry.isEmpty == false)
-}
-
-@Test func toolRegistryDispatchEchoTool() async throws {
-    let registry = ToolRegistry()
-    registry.register(EchoTool())
-    let result = try await registry.dispatch(
-        name: "echo",
-        callId: "c1",
-        arguments: "{\"text\":\"hello\"}"
-    )
-    #expect(result.output == "hello")
-    #expect(result.success == true)
-    #expect(result.name == "echo")
-    #expect(result.callId == "c1")
 }
 
 @Test func toolRegistryDispatchUnknownToolThrows() async throws {
@@ -89,14 +79,73 @@ private struct ConcurrentEchoTool: AgentToolProtocol {
 
 @Test func toolRegistryIsConcurrencySafeDefault() {
     let registry = ToolRegistry()
-    registry.register(EchoTool())
-    #expect(registry.isConcurrencySafe(toolName: "echo") == false)
+    registry.register(MockLLMTool())
+    #expect(registry.isConcurrencySafe(toolName: "mock_llm_tool") == false)
 }
 
 @Test func toolRegistryIsConcurrencySafeTrue() {
     let registry = ToolRegistry()
-    registry.register(ConcurrentEchoTool())
-    #expect(registry.isConcurrencySafe(toolName: "concurrentEcho") == true)
+    registry.register(ConcurrentMockLLMTool())
+    #expect(registry.isConcurrencySafe(toolName: "concurrent_mock_llm_tool") == true)
+}
+
+// MARK: - AgentLLMTool Tests
+
+@Test func agentLLMToolSchemaDerivesFromToolDefinition() {
+    let schema = MockLLMTool.inputSchema
+    #expect(schema.name == "mock_llm_tool")
+    #expect(schema.description == "A mock tool for testing AgentLLMTool.")
+}
+
+@Test func agentLLMToolDispatchReturnsContent() async throws {
+    let registry = ToolRegistry()
+    registry.register(MockLLMTool())
+    let result = try await registry.dispatch(
+        name: "mock_llm_tool",
+        callId: "c1",
+        arguments: "{\"message\":\"hello\"}"
+    )
+    #expect(result.output == "echo:hello")
+    #expect(result.success == true)
+    #expect(result.name == "mock_llm_tool")
+    #expect(result.callId == "c1")
+}
+
+@Test func agentLLMToolOutputNotDoubleQuoted() async throws {
+    // Verifies AnyAgentTool's Output==String fast path: content is returned as-is,
+    // not JSON-encoded (which would wrap it in extra quotes).
+    let registry = ToolRegistry()
+    registry.register(MockLLMTool())
+    let result = try await registry.dispatch(
+        name: "mock_llm_tool",
+        callId: "c2",
+        arguments: "{\"message\":\"world\"}"
+    )
+    #expect(result.output == "echo:world")
+    #expect(!result.output.hasPrefix("\""))
+}
+
+@Test func agentLLMToolConcurrencySafeDefaultsFalse() {
+    #expect(MockLLMTool.isConcurrencySafe == false)
+    let registry = ToolRegistry()
+    registry.register(MockLLMTool())
+    #expect(registry.isConcurrencySafe(toolName: "mock_llm_tool") == false)
+}
+
+@Test func agentLLMToolConcurrencySafeOverridable() {
+    #expect(ConcurrentMockLLMTool.isConcurrencySafe == true)
+    let registry = ToolRegistry()
+    registry.register(ConcurrentMockLLMTool())
+    #expect(registry.isConcurrencySafe(toolName: "concurrent_mock_llm_tool") == true)
+}
+
+@Test func agentLLMToolMultipleToolsInRegistry() {
+    let registry = ToolRegistry()
+    registry.register(MockLLMTool())
+    registry.register(ConcurrentMockLLMTool())
+    #expect(registry.toolNames.count == 2)
+    #expect(registry.toolNames.contains("mock_llm_tool"))
+    #expect(registry.toolNames.contains("concurrent_mock_llm_tool"))
 }
 
 // MARK: - ToolListPolicy Tests

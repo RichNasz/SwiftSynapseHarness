@@ -58,6 +58,35 @@ Mark `isConcurrencySafe = true` on tools with no shared mutable state to enable 
 
 ---
 
+### Section: Declarative Tools with @LLMTool
+
+Subsection under "Typed Tool System". Show `AgentLLMTool` bridge protocol:
+
+```swift
+/// Searches documentation for a query.
+@LLMTool
+struct SearchDocsTool: AgentLLMTool {
+    @LLMToolArguments
+    struct Arguments {
+        @LLMToolGuide(description: "The search query")
+        var query: String
+
+        @LLMToolGuide(description: "Max results", .range(1...50))
+        var maxResults: Int
+    }
+
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        ToolOutput(content: try await search(arguments.query, limit: arguments.maxResults))
+    }
+}
+
+tools.register(SearchDocsTool())  // same registration path as AgentToolProtocol
+```
+
+Explain: `@LLMTool` synthesizes `name` (snake_cased), `description` (doc comment), `toolDefinition`. `AgentLLMTool` provides `inputSchema`, `isConcurrencySafe` (default `false`), and `execute(input:)` as defaults — bridging `ToolDefinition` → `FunctionToolParam` via `FunctionToolParam.init(from:)`. Inherits `AgentToolProtocol`, so declarative tools work everywhere existing tools do.
+
+---
+
 ### Section: AgentToolLoop
 
 The reusable tool dispatch loop handles the complete LLM conversation cycle:

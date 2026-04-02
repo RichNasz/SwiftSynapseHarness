@@ -40,6 +40,33 @@ let results = try await tools.dispatchBatch(calls)
 
 Set `isConcurrencySafe = true` on stateless tools to enable parallel execution with other safe tools during streaming.
 
+### Declarative Tools with @LLMTool
+
+For zero-boilerplate tool definitions, conform to ``AgentLLMTool`` and apply `@LLMTool`. The macro synthesizes `name` (snake_cased struct name), `description` (from the doc comment), and `toolDefinition`. The bridge protocol provides `inputSchema`, `isConcurrencySafe`, and `execute(input:)` as defaults:
+
+```swift
+/// Searches documentation for a query.
+@LLMTool
+struct SearchDocsTool: AgentLLMTool {
+    @LLMToolArguments
+    struct Arguments {
+        @LLMToolGuide(description: "The search query")
+        var query: String
+
+        @LLMToolGuide(description: "Max results", .range(1...50))
+        var maxResults: Int
+    }
+
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        ToolOutput(content: try await search(arguments.query, limit: arguments.maxResults))
+    }
+}
+
+tools.register(SearchDocsTool())  // same registration path as AgentToolProtocol
+```
+
+`AgentLLMTool` inherits `AgentToolProtocol`, so declarative tools work everywhere existing tools do — `ToolRegistry`, `AgentToolLoop`, hooks, permissions, and streaming.
+
 ## AgentToolLoop
 
 The reusable tool dispatch loop handles the complete LLM conversation cycle:

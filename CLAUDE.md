@@ -34,6 +34,7 @@ Re-exports `SwiftSynapseMacrosClient` so users only need `import SwiftSynapseHar
 | Production | `Guardrails.swift`, `MCP.swift`, `ContextCompression.swift`, `ConfigurationHierarchy.swift`, `Caching.swift`, `AgentCoordination.swift`, `PluginSystem.swift` | Full production capabilities |
 | Polish | `CostTracking.swift`, `ErrorClassification.swift`, `ResultTruncation.swift`, `RateLimiting.swift`, `SystemPromptBuilder.swift`, `TestFixtures.swift`, `GracefulShutdown.swift`, `AgentMemory.swift`, `ConversationRecovery.swift` | Operational polish |
 | Skills | `SkillsSupport.swift` | SwiftOpenSkills integration |
+| LLM Tool Macros | `LLMToolSupport.swift` | `@LLMTool` / `AgentLLMTool` bridge to `AgentToolProtocol` |
 | Exports | `Exports.swift` | `@_exported import SwiftSynapseMacrosClient` |
 
 ### SwiftSynapseUI Files (`Sources/SwiftSynapseUI/`)
@@ -71,6 +72,7 @@ All `.swift` files are generated from specs in `CodeGenSpecs/`. Specs are the si
 
 - [SwiftSynapseMacros](https://github.com/RichNasz/SwiftSynapseMacros) (branch: main) — macros + core types
 - [SwiftOpenSkills](https://github.com/RichNasz/SwiftOpenSkills) (branch: main) — skills framework
+- [SwiftLLMToolMacros](https://github.com/RichNasz/SwiftLLMToolMacros) (branch: main) — `@LLMTool`, `@LLMToolArguments`, `@LLMToolGuide` macros
 
 ## Requirements
 

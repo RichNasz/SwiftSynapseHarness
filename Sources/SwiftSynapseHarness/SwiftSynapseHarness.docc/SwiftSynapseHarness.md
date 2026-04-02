@@ -30,6 +30,10 @@ SwiftSynapseHarness provides the orchestration layer for Swift AI agents. It re-
 ### Tool System
 
 - ``AgentToolProtocol``
+- ``AgentLLMTool``
+- ``LLMTool``
+- ``LLMToolArguments``
+- ``ToolOutput``
 - ``AnyAgentTool``
 - ``ToolRegistry``
 - ``AgentToolLoop``

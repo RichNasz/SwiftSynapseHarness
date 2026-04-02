@@ -15,6 +15,7 @@ This directory contains the specifications that serve as the single source of tr
 | [UI.md](UI.md) | `Sources/SwiftSynapseUI/ObservableAgent.swift`, `AgentAppIntent.swift`, `AgentStatusView.swift`, `AgentChatView.swift`, `TranscriptView.swift`, `StreamingTextView.swift`, `ToolCallDetailView.swift` |
 | [Tests.md](Tests.md) | `Tests/SwiftSynapseHarnessTests/AgentConfigurationTests.swift`, `RetryAndContextTests.swift`, `ToolSystemTests.swift`, `SessionAndTranscriptTests.swift`, `HooksAndGuardrailsTests.swift`, `ProductionPolishTests.swift`, `AgentRuntimeTests.swift` |
 | [Shared-Skills.md](Shared-Skills.md) | `Sources/SwiftSynapseHarness/SkillsSupport.swift` |
+| [Shared-LLMToolMacros.md](Shared-LLMToolMacros.md) | `Sources/SwiftSynapseHarness/LLMToolSupport.swift` |
 
 ## Documentation Spec Files
 
@@ -51,4 +52,4 @@ This directory contains the specifications that serve as the single source of tr
 
 ## Dependency
 
-SwiftSynapseHarness depends on `SwiftSynapseMacrosClient` (from `SwiftSynapseMacros`) for core types: `AgentStatus`, `ObservableTranscript`, `TextFormat`, `AgentGoalMetadata`, `ToolProgressUpdate`, and macro declarations.
+SwiftSynapseHarness depends on `SwiftSynapseMacrosClient` (from `SwiftSynapseMacros`) for core types: `AgentStatus`, `ObservableTranscript`, `TextFormat`, `AgentGoalMetadata`, `ToolProgressUpdate`, and macro declarations. It also depends directly on `SwiftLLMToolMacros` (branch: main) for the `AgentLLMTool` bridge protocol.

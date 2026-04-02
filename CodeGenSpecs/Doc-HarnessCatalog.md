@@ -46,6 +46,10 @@ Links to all guide articles and HOWTOs:
 #### Tool System
 
 - `` ``AgentToolProtocol`` ``
+- `` ``AgentLLMTool`` ``
+- `` ``LLMTool`` ``
+- `` ``LLMToolArguments`` ``
+- `` ``ToolOutput`` ``
 - `` ``AnyAgentTool`` ``
 - `` ``ToolRegistry`` ``
 - `` ``AgentToolLoop`` ``

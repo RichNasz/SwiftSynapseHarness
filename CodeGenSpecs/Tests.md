@@ -27,36 +27,40 @@ Unit tests for the SwiftSynapseHarness package. Covers all testable harness type
 Defined once at file scope in each test file that needs them:
 
 ```swift
-// Mock tool for ToolSystemTests
-struct EchoTool: AgentToolProtocol {
-    struct Input: Codable, Sendable { let text: String }
-    typealias Output = String
-    static let name = "echo"
-    static let description = "Echoes input text"
-    static var inputSchema: FunctionToolParam {
-        FunctionToolParam(
-            name: name, description: description,
-            parameters: .object(properties: [("text", .string(description: "Text to echo"))], required: ["text"]),
-            strict: true
-        )
+// Mock AgentLLMTool for ToolSystemTests — conforms manually (no macros needed in tests)
+struct MockLLMTool: AgentLLMTool {
+    struct Arguments: LLMToolArguments {
+        let message: String
+        static var jsonSchema: JSONSchemaValue {
+            .object(properties: [("message", .string(description: "A test message"))], required: ["message"])
+        }
     }
-    func execute(input: Input) async throws -> String { input.text }
+    static var name: String { "mock_llm_tool" }
+    static var description: String { "A mock tool for testing AgentLLMTool." }
+    static var toolDefinition: ToolDefinition {
+        ToolDefinition(name: name, description: description, parameters: Arguments.jsonSchema)
+    }
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        ToolOutput(content: "echo:\(arguments.message)")
+    }
 }
 
-struct ConcurrentEchoTool: AgentToolProtocol {
-    struct Input: Codable, Sendable { let text: String }
-    typealias Output = String
-    static let name = "concurrentEcho"
-    static let description = "Concurrent-safe echo"
-    static let isConcurrencySafe = true
-    static var inputSchema: FunctionToolParam {
-        FunctionToolParam(
-            name: name, description: description,
-            parameters: .object(properties: [("text", .string(description: "Text"))], required: ["text"]),
-            strict: true
-        )
+struct ConcurrentMockLLMTool: AgentLLMTool {
+    struct Arguments: LLMToolArguments {
+        let value: String
+        static var jsonSchema: JSONSchemaValue {
+            .object(properties: [("value", .string(description: "A value"))], required: ["value"])
+        }
     }
-    func execute(input: Input) async throws -> String { input.text }
+    static var name: String { "concurrent_mock_llm_tool" }
+    static var description: String { "A concurrent-safe mock LLM tool." }
+    static var isConcurrencySafe: Bool { true }
+    static var toolDefinition: ToolDefinition {
+        ToolDefinition(name: name, description: description, parameters: Arguments.jsonSchema)
+    }
+    func call(arguments: Arguments) async throws -> ToolOutput {
+        ToolOutput(content: arguments.value)
+    }
 }
 
 // Mock agent for AgentRuntimeTests
@@ -110,16 +114,21 @@ actor MockAgent: AgentExecutable {
 | `microCompactorTruncatesLongResults` | Tool result > `maxResultLength` gets a `[Truncated:]` suffix |
 | `microCompactorPreservesShortResults` | Tool result ≤ `maxResultLength` passes through unchanged |
 
-### ToolSystemTests.swift (sources: AgentToolProtocol.swift, ToolRegistry.swift, ToolListPolicy.swift, DenialTracking.swift, Permission.swift)
+### ToolSystemTests.swift (sources: AgentToolProtocol.swift, ToolRegistry.swift, LLMToolSupport.swift, ToolListPolicy.swift, DenialTracking.swift, Permission.swift)
 
 | Test Function | What it verifies |
 |---------------|-----------------|
-| `toolRegistryRegistersAndListsDefinitions` | After `register(EchoTool())`, `definitions()` returns 1 item and `toolNames` contains "echo" |
+| `toolRegistryRegistersAndListsDefinitions` | After `register(MockLLMTool())`, `definitions()` returns 1 item and `toolNames` contains "mock_llm_tool" |
 | `toolRegistryIsNotEmptyAfterRegister` | `isEmpty` is `false` after registration |
-| `toolRegistryDispatchEchoTool` | `dispatch(name: "echo", callId: "c1", arguments: "{\"text\":\"hi\"}")` returns `ToolResult` with `output == "hi"` |
 | `toolRegistryDispatchUnknownToolThrows` | `dispatch(name: "nonexistent", ...)` throws `ToolDispatchError.unknownTool` |
-| `toolRegistryIsConcurrencySafeDefault` | `EchoTool` registered → `isConcurrencySafe(toolName: "echo")` returns `false` |
-| `toolRegistryIsConcurrencySafeTrue` | `ConcurrentEchoTool` registered → `isConcurrencySafe(toolName: "concurrentEcho")` returns `true` |
+| `toolRegistryIsConcurrencySafeDefault` | `MockLLMTool` registered → `isConcurrencySafe(toolName: "mock_llm_tool")` returns `false` |
+| `toolRegistryIsConcurrencySafeTrue` | `ConcurrentMockLLMTool` registered → `isConcurrencySafe(toolName: "concurrent_mock_llm_tool")` returns `true` |
+| `agentLLMToolSchemaDerivesFromToolDefinition` | `MockLLMTool.inputSchema.name == "mock_llm_tool"` and `.description` matches |
+| `agentLLMToolDispatchReturnsContent` | `dispatch(name: "mock_llm_tool", arguments: "{\"message\":\"hello\"}")` returns `output == "echo:hello"` |
+| `agentLLMToolOutputNotDoubleQuoted` | Dispatched output is `"echo:world"`, does not start with `"\""`  — verifies `Output==String` fast path |
+| `agentLLMToolConcurrencySafeDefaultsFalse` | `MockLLMTool.isConcurrencySafe == false`; registry confirms same |
+| `agentLLMToolConcurrencySafeOverridable` | `ConcurrentMockLLMTool.isConcurrencySafe == true`; registry confirms same |
+| `agentLLMToolMultipleToolsInRegistry` | `register(MockLLMTool())` + `register(ConcurrentMockLLMTool())` → `toolNames.count == 2`, both names present |
 | `toolListPolicyAllowRule` | `.allow(["goodTool"])` → `evaluate("goodTool")` returns `.allowed` |
 | `toolListPolicyDenyRule` | `.deny(["badTool"])` → `evaluate("badTool")` returns `.denied` |
 | `toolListPolicyRequireApprovalRule` | `.requireApproval(["gatedTool"])` → returns `.requiresApproval` |
