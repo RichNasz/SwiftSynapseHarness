@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Resilience
+
 // MARK: - API Error Categories
 
 /// Semantic classification of API errors for structured handling.
@@ -183,3 +185,5 @@ private func extractRetryAfter(from description: String) -> Int? {
     }
     return nil
 }
+
+#endif

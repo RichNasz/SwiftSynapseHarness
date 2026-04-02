@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - Cache Policy
 
 /// Configuration for cache behavior.
@@ -153,3 +155,5 @@ public actor ToolResultCache {
         return "\(toolName):\(hash)"
     }
 }
+
+#endif

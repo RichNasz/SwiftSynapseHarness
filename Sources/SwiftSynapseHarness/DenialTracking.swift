@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Safety
+
 // MARK: - Permission Mode
 
 /// Configures the overall permission behavior for an agent.
@@ -114,3 +116,5 @@ public actor AdaptivePermissionGate {
         }
     }
 }
+
+#endif

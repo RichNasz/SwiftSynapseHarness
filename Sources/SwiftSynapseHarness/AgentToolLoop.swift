@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if Core
 /// A reusable tool dispatch loop that agents delegate to instead of building their own.
 ///
 /// `AgentToolLoop.run()` handles the full send → tool calls → dispatch → send cycle,
@@ -551,3 +552,4 @@ public enum AgentToolLoop {
         )
     }
 }
+#endif

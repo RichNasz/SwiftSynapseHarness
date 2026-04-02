@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Resilience
+
 // MARK: - Compaction Trigger
 
 /// Configures when transcript compression fires in the tool loop.
@@ -207,3 +209,5 @@ public struct CompositeCompressor: TranscriptCompressor {
         return result
     }
 }
+
+#endif

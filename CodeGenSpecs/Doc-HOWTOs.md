@@ -22,6 +22,8 @@ Title: `How to Add Tools to an Agent`
 
 Tagline: Define a typed tool, register it, and wire it into the tool loop.
 
+**Requires**: Core trait (included in the default Production trait).
+
 ### Steps
 
 #### Step 1: Define a Tool
@@ -101,6 +103,8 @@ Title: `How to Configure Tool Permissions`
 
 Tagline: Control which tools run automatically, which require human approval, and which are always blocked.
 
+**Requires**: Safety trait (included in the default Production trait).
+
 ### Steps
 
 #### Step 1: Create a ToolListPolicy
@@ -166,6 +170,8 @@ Use `.autoApprove` for trusted CI environments. Use `.planOnly` to let the LLM d
 Title: `How to Deploy an Agent to Production`
 
 Tagline: Add guardrails, cost tracking, rate limiting, and graceful shutdown for a production-ready deployment.
+
+**Requires**: Production trait (the default) — includes Safety (guardrails), Observability (cost tracking), Resilience (rate limiting), and Core (graceful shutdown).
 
 ### Steps
 
@@ -244,6 +250,8 @@ Handlers run in LIFO order (last registered runs first).
 Title: `How to Coordinate Multiple Agents`
 
 Tagline: Run child agents, build dependency-aware pipelines, and share state between agents.
+
+**Requires**: MultiAgent trait. Add `traits: ["Production", "MultiAgent"]` or `traits: ["Advanced"]` to your `.package()` declaration.
 
 ### Steps
 
@@ -336,6 +344,8 @@ for await message in mailbox.messages {
 Title: `How to Test Agents`
 
 Tagline: Deterministic, fast agent tests using VCR recording/replay, in-memory telemetry, and fixture stores.
+
+**Requires**: Core trait (VCR, fixtures), Observability trait (telemetry assertions), Hooks trait (hook testing), Safety trait (guardrail testing). All included in the default Production trait.
 
 ### Steps
 

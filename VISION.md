@@ -11,6 +11,10 @@ SwiftSynapseHarness is the production-grade agent runtime for the SwiftSynapse e
 3. **Permission & Safety** — `PermissionGate` and `ToolListPolicy` enforce policy-driven access control, with human-in-the-loop approval and denial tracking built in.
 4. **Production Readiness** — Session persistence, guardrails, MCP integration, multi-agent coordination, cost tracking, rate limiting, graceful shutdown, and VCR testing make agents deployable in real business environments.
 
+## Package Traits
+
+SwiftSynapseHarness uses SwiftPM Package Traits (SE-0458) for modular feature selection. The default `Production` trait includes Core, Hooks, Safety, Resilience, and Observability — everything most agents need. Advanced users can opt into MultiAgent, Persistence, MCP, and Plugins individually or via the `Advanced`/`Full` composite traits. A `Core`-only build provides the minimum viable agent: typed tools, dispatch loop, LLM client, and configuration.
+
 ## Non-Negotiables
 
 - **Swift 6.2+** — Uses modern Swift concurrency, actors, and structured concurrency throughout.

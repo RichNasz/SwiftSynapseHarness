@@ -49,6 +49,27 @@ Re-exports `SwiftSynapseMacrosClient` so users only need `import SwiftSynapseHar
 | `StreamingTextView.swift` | Animated streaming text with cursor |
 | `ToolCallDetailView.swift` | Expandable tool call details |
 
+### Package Traits
+
+SwiftSynapseHarness uses SwiftPM Package Traits (SE-0450) for modular feature selection. Trait names declared in `Package.swift` are natively available as compilation conditions — each source file is wrapped in `#if TraitName` / `#endif` (e.g., `#if Core`, `#if Hooks`). No `.define()` or `swiftSettings` are needed.
+
+| Trait | Files | Default? |
+|-------|-------|----------|
+| `Core` | Tool system, LLM client, config, runtime, exports, skills, budgets, caching, shutdown, test fixtures | No |
+| `Hooks` | AgentHook, AgentHookPipeline | No |
+| `Safety` | Permission, Guardrails, DenialTracking, ToolListPolicy | No |
+| `Resilience` | RecoveryStrategy, ErrorClassification, RateLimiting, ConversationRecovery, ContextCompression | No |
+| `Observability` | Telemetry, TelemetrySinks, CostTracking | No |
+| `MultiAgent` | AgentCoordination, SubagentContext | No |
+| `Persistence` | AgentSession, SessionPersistence, AgentMemory | No |
+| `MCP` | MCP.swift | No |
+| `Plugins` | PluginSystem | No |
+| `Production` | Core + Hooks + Safety + Resilience + Observability | **Yes** |
+| `Advanced` | Production + MultiAgent + Persistence + MCP + Plugins | No |
+| `Full` | Everything | No |
+
+`TraitStubs.swift` provides no-op stubs (`#if !TraitName`) for cross-trait type references so Core files compile regardless of which traits are enabled. See `CodeGenSpecs/Traits.md` for full details.
+
 ### Key Design Decisions
 
 - **Re-exports core types**: `@_exported import SwiftSynapseMacrosClient` — users import one package

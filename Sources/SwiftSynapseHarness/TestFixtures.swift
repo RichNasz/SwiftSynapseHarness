@@ -3,6 +3,8 @@
 import Foundation
 import CryptoKit
 
+#if Core
+
 // MARK: - Fixture Mode
 
 /// Controls how the VCR client handles requests.
@@ -212,3 +214,5 @@ public enum VCRError: Error, Sendable {
     /// No fixture was found for the given request key.
     case fixtureNotFound(key: String)
 }
+
+#endif

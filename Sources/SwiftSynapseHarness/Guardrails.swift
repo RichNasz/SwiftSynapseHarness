@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Safety
+
 // MARK: - Guardrail Types
 
 /// The kind of content being evaluated by a guardrail.
@@ -177,3 +179,5 @@ public enum GuardrailError: Error, Sendable {
     /// A guardrail policy blocked the content.
     case blocked(policy: String, reason: String)
 }
+
+#endif

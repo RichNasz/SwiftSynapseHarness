@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Resilience
+
 // MARK: - Rate Limit Policy
 
 /// Configuration for rate-limit-aware retry behavior.
@@ -171,3 +173,5 @@ private func applyJitter(_ duration: Duration, factor: Double) -> Duration {
     let jitteredNanos = totalNanos * (1.0 + jitter)
     return Duration.nanoseconds(Int64(jitteredNanos))
 }
+
+#endif

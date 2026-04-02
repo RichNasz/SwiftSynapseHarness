@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - Truncation Policy
 
 /// Controls how oversized tool results are truncated before entering the transcript.
@@ -96,3 +98,5 @@ public enum ResultTruncator {
         return path
     }
 }
+
+#endif

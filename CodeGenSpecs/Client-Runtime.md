@@ -8,6 +8,10 @@
 
 The runtime bridge between macro-generated `run(goal:)` and user-implemented `execute(goal:)`. Handles lifecycle status transitions, transcript management, hook firing, telemetry emission, session persistence, and cancellation.
 
+## Trait Guard
+
+All generated files are wrapped in `#if Core` / `#endif`. Internal references to cross-trait types (Hooks, Observability, Persistence) use `#if TraitName` blocks inside method bodies where possible. Parameter-level cross-trait types are handled by stubs in `TraitStubs.swift`.
+
 ---
 
 ## AgentLifecycleError

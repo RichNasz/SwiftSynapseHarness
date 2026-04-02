@@ -16,6 +16,7 @@ This directory contains the specifications that serve as the single source of tr
 | [Tests.md](Tests.md) | `Tests/SwiftSynapseHarnessTests/AgentConfigurationTests.swift`, `RetryAndContextTests.swift`, `ToolSystemTests.swift`, `SessionAndTranscriptTests.swift`, `HooksAndGuardrailsTests.swift`, `ProductionPolishTests.swift`, `AgentRuntimeTests.swift` |
 | [Shared-Skills.md](Shared-Skills.md) | `Sources/SwiftSynapseHarness/SkillsSupport.swift` |
 | [Shared-LLMToolMacros.md](Shared-LLMToolMacros.md) | `Sources/SwiftSynapseHarness/LLMToolSupport.swift` |
+| [Traits.md](Traits.md) | `Sources/SwiftSynapseHarness/TraitStubs.swift` |
 
 ## Documentation Spec Files
 
@@ -33,6 +34,7 @@ This directory contains the specifications that serve as the single source of tr
 | File | Purpose |
 |------|---------|
 | `Exports.swift` | Re-exports `SwiftSynapseMacrosClient` so users only need one import |
+| `TraitStubs.swift` | No-op stubs for cross-trait type references when traits are disabled |
 
 ## Generation Rules
 

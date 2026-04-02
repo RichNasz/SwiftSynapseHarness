@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if Core
 // MARK: - Streaming Events
 
 /// Structured events yielded during a streaming LLM response.
@@ -146,4 +147,5 @@ public actor StreamingToolExecutor {
         runningTasks.append(task)
     }
 }
+#endif
 

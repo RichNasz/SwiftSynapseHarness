@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Plugins
+
 // MARK: - Plugin Context
 
 /// Provides access to framework registries for plugin activation.
@@ -124,3 +126,5 @@ public actor PluginManager {
         Array(activePlugins)
     }
 }
+
+#endif

@@ -1,5 +1,6 @@
 // Generated from CodeGenSpecs — Do not edit manually. Update spec and re-generate.
 
+#if Hooks
 /// Manages an ordered list of hooks and fires events through them.
 ///
 /// Hooks are evaluated in registration order. If any hook returns `.block`,
@@ -35,3 +36,4 @@ public actor AgentHookPipeline {
         return .proceed
     }
 }
+#endif

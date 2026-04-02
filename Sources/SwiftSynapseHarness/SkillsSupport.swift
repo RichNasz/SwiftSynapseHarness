@@ -4,6 +4,7 @@ import Foundation
 import SwiftOpenSkills
 import SwiftOpenResponsesDSL
 
+#if Core
 /// Re-export skills types for convenience.
 public typealias SkillStore = SwiftOpenSkills.SkillStore
 public typealias SkillSearchPath = SwiftOpenSkills.SkillSearchPath
@@ -15,4 +16,5 @@ import SwiftOpenSkillsResponses
 /// Re-export skills-responses types for convenience.
 public typealias SkillsAgent = SwiftOpenSkillsResponses.SkillsAgent
 public typealias Skills = SwiftOpenSkillsResponses.Skills
+#endif
 #endif

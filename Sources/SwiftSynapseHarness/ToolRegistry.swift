@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if Core
 /// A registry of agent tools with typed dispatch and concurrency-aware batch execution.
 ///
 /// Register tools conforming to `AgentToolProtocol`, then use `dispatch` or
@@ -164,3 +165,4 @@ public final class ToolRegistry: @unchecked Sendable {
         return results
     }
 }
+#endif

@@ -4,6 +4,8 @@ import Foundation
 import SwiftLLMToolMacros
 import SwiftOpenResponsesDSL
 
+#if Core
+
 // MARK: - Re-exports
 
 /// Re-export macro-side types so users only need `import SwiftSynapseHarness`.
@@ -67,3 +69,5 @@ extension AgentLLMTool {
         return output.content
     }
 }
+
+#endif

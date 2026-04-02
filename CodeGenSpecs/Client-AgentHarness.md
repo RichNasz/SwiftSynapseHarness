@@ -25,6 +25,20 @@ The agent harness is the runtime layer that orchestrates agent execution. It pro
 
 These types were designed to match production agent harness capabilities while remaining Swift-native (actors, structured concurrency, `@Observable`).
 
+## Trait Guards
+
+Each generated file is wrapped in its corresponding trait's `#if TraitName` / `#endif`:
+
+- `#if Core`: AgentToolProtocol, ToolRegistry, AgentToolLoop, StreamingToolExecutor, AgentLLMClient, AgentConfiguration, RetryWithBackoff, ContextBudget
+- `#if Hooks`: AgentHook, AgentHookPipeline
+- `#if Safety`: Permission, ToolListPolicy
+- `#if Resilience`: RecoveryStrategy
+- `#if Observability`: Telemetry, TelemetrySinks
+- `#if MultiAgent`: SubagentContext
+- `#if Persistence`: AgentSession
+
+Core files that reference cross-trait types (AgentToolLoop, StreamingToolExecutor, ToolRegistry) use `#if TraitName` blocks inside method bodies. Parameter-level cross-trait types are handled by stubs in `TraitStubs.swift`.
+
 ---
 
 ## AgentToolProtocol

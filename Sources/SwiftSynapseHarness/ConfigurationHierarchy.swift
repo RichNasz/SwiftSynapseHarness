@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - Configuration Priority
 
 /// Priority levels for configuration sources. Higher values override lower ones.
@@ -208,3 +210,5 @@ public actor ConfigurationResolver {
         cachedValues = nil
     }
 }
+
+#endif

@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - System Prompt Section
 
 /// A composable section of a system prompt.
@@ -192,3 +194,5 @@ public actor SystemPromptBuilder {
         dynamicSections.removeAll()
     }
 }
+
+#endif

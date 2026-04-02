@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Resilience
+
 // MARK: - Recovery Context
 
 /// Mutable state tracking which recovery strategies have been attempted.
@@ -259,3 +261,5 @@ public func classifyRecoverableError(_ error: Error) -> RecoverableError? {
 
     return nil
 }
+
+#endif

@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - Tool Progress Delegate
 
 /// A delegate that receives progress updates from tools during execution.
@@ -51,3 +53,5 @@ extension ProgressReportingTool {
 struct NoOpProgressDelegate: ToolProgressDelegate {
     func reportProgress(_ update: ToolProgressUpdate) async {}
 }
+
+#endif

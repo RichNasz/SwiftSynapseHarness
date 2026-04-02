@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 /// Execution mode determining which LLM backend to use.
 public enum ExecutionMode: String, Codable, Sendable {
     /// On-device only via Foundation Models framework.
@@ -155,3 +157,5 @@ public struct AgentConfiguration: Codable, Sendable {
         )
     }
 }
+
+#endif

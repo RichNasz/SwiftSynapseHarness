@@ -1,5 +1,7 @@
 // Generated from CodeGenSpecs — Do not edit manually. Update spec and re-generate.
 
+#if Safety
+
 /// A list-based permission policy for simple allow/deny/approval rules.
 ///
 /// ```swift
@@ -45,3 +47,5 @@ public struct ToolListPolicy: PermissionPolicy {
         return .allowed
     }
 }
+
+#endif

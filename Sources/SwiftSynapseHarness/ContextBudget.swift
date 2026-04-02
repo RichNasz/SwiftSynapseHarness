@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - Context Budget
 
 /// Tracks token usage against a maximum budget for context window management.
@@ -90,3 +92,5 @@ public struct SlidingWindowCompressor: TranscriptCompressor {
         return [summary] + entries.suffix(keepLast)
     }
 }
+
+#endif

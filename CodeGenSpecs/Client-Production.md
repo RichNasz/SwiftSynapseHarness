@@ -16,6 +16,18 @@
 
 Production capabilities that close the gap between SwiftSynapse and production agent harnesses. Each capability is modular, opt-in, and integrates with the core harness via established extension points (hooks, telemetry, tool loop parameters).
 
+## Trait Guards
+
+Each generated file is wrapped in its corresponding trait's `#if TraitName` / `#endif`:
+
+- `#if Persistence`: SessionPersistence
+- `#if Safety`: Guardrails, DenialTracking
+- `#if Core`: ToolProgress, ConfigurationHierarchy, Caching
+- `#if MCP`: MCP
+- `#if Resilience`: ContextCompression
+- `#if MultiAgent`: AgentCoordination
+- `#if Plugins`: PluginSystem
+
 ---
 
 ## Session Persistence

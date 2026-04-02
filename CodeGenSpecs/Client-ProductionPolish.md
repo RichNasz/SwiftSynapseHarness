@@ -15,6 +15,15 @@
 
 Production polish capabilities that close the operational gap between a working agent harness and a production-deployed one. Each capability is modular, opt-in, and integrates through established extension points (telemetry sinks, hook events, function parameters).
 
+## Trait Guards
+
+Each generated file is wrapped in its corresponding trait's `#if TraitName` / `#endif`:
+
+- `#if Observability`: CostTracking
+- `#if Resilience`: ErrorClassification, RateLimiting, ConversationRecovery
+- `#if Core`: ResultTruncation, SystemPromptBuilder, TestFixtures, GracefulShutdown
+- `#if Persistence`: AgentMemory
+
 ---
 
 ## Cost Tracking

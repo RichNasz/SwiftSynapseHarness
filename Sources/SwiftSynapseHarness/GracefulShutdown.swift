@@ -5,6 +5,8 @@ import Foundation
 import Dispatch
 #endif
 
+#if Core
+
 // MARK: - Shutdown Handler Protocol
 
 /// A handler that performs cleanup during graceful shutdown.
@@ -132,3 +134,5 @@ private actor SignalSourceStorage {
         sources.append(source)
     }
 }
+
+#endif

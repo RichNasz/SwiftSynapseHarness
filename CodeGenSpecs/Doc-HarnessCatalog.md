@@ -35,7 +35,11 @@ Links to all guide articles and HOWTOs:
 - `<doc:HowToMultiAgent>`
 - `<doc:HowToTestAgents>`
 
-#### Agent Runtime
+#### Package Traits
+
+SwiftSynapseHarness uses SwiftPM Package Traits for modular feature selection. Each topic section below indicates which trait enables it. The default `Production` trait includes Core, Hooks, Safety, Resilience, and Observability. For multi-agent coordination, persistence, MCP, or plugins, add `traits: ["Full"]` or `traits: ["Advanced"]` to your `.package()` declaration, or add individual traits like `traits: ["Production", "MCP"]`.
+
+#### Agent Runtime — *Core trait*
 
 - `` ``agentRun(agent:goal:hooks:telemetry:sessionStore:sessionAgentType:)`` ``
 - `` ``AgentExecutable`` ``
@@ -43,7 +47,7 @@ Links to all guide articles and HOWTOs:
 - `` ``AgentConfiguration`` ``
 - `` ``ExecutionMode`` ``
 
-#### Tool System
+#### Tool System — *Core trait*
 
 - `` ``AgentToolProtocol`` ``
 - `` ``AgentLLMTool`` ``
@@ -60,7 +64,7 @@ Links to all guide articles and HOWTOs:
 - `` ``ResultTruncator`` ``
 - `` ``TruncationPolicy`` ``
 
-#### Hooks
+#### Hooks — *Hooks trait*
 
 - `` ``AgentHook`` ``
 - `` ``AgentHookPipeline`` ``
@@ -69,7 +73,7 @@ Links to all guide articles and HOWTOs:
 - `` ``HookAction`` ``
 - `` ``ClosureHook`` ``
 
-#### Permissions
+#### Permissions — *Safety trait*
 
 - `` ``PermissionGate`` ``
 - `` ``PermissionPolicy`` ``
@@ -79,7 +83,7 @@ Links to all guide articles and HOWTOs:
 - `` ``DenialTracker`` ``
 - `` ``PermissionMode`` ``
 
-#### Guardrails
+#### Guardrails — *Safety trait*
 
 - `` ``GuardrailPolicy`` ``
 - `` ``GuardrailPipeline`` ``
@@ -87,7 +91,7 @@ Links to all guide articles and HOWTOs:
 - `` ``GuardrailDecision`` ``
 - `` ``ContentFilter`` ``
 
-#### LLM Backend
+#### LLM Backend — *Core trait*
 
 - `` ``AgentLLMClient`` ``
 - `` ``AgentRequest`` ``
@@ -97,7 +101,7 @@ Links to all guide articles and HOWTOs:
 - `` ``CloudLLMClient`` ``
 - `` ``HybridLLMClient`` ``
 
-#### Recovery & Resilience
+#### Recovery & Resilience — *Resilience trait*
 
 - `` ``RecoveryChain`` ``
 - `` ``RecoveryStrategy`` ``
@@ -112,7 +116,7 @@ Links to all guide articles and HOWTOs:
 - `` ``APIErrorCategory`` ``
 - `` ``ToolErrorCategory`` ``
 
-#### Context Management
+#### Context Management — *Core trait (ContextBudget), Resilience trait (compressors)*
 
 - `` ``ContextBudget`` ``
 - `` ``CompactionTrigger`` ``
@@ -123,7 +127,7 @@ Links to all guide articles and HOWTOs:
 - `` ``AutoCompactCompressor`` ``
 - `` ``CompositeCompressor`` ``
 
-#### Session & Memory
+#### Session & Memory — *Persistence trait*
 
 - `` ``SessionStore`` ``
 - `` ``FileSessionStore`` ``
@@ -134,7 +138,7 @@ Links to all guide articles and HOWTOs:
 - `` ``MemoryEntry`` ``
 - `` ``MemoryCategory`` ``
 
-#### Telemetry
+#### Telemetry — *Observability trait*
 
 - `` ``TelemetrySink`` ``
 - `` ``TelemetryEvent`` ``
@@ -144,7 +148,7 @@ Links to all guide articles and HOWTOs:
 - `` ``CompositeTelemetrySink`` ``
 - `` ``TokenUsageTracker`` ``
 
-#### Cost Tracking
+#### Cost Tracking — *Observability trait*
 
 - `` ``CostTracker`` ``
 - `` ``CostRecord`` ``
@@ -152,7 +156,7 @@ Links to all guide articles and HOWTOs:
 - `` ``ModelUsage`` ``
 - `` ``CostTrackingTelemetrySink`` ``
 
-#### MCP Integration
+#### MCP Integration — *MCP trait*
 
 - `` ``MCPManager`` ``
 - `` ``MCPServerConfig`` ``
@@ -163,7 +167,7 @@ Links to all guide articles and HOWTOs:
 - `` ``MCPMessage`` ``
 - `` ``MCPToolDefinition`` ``
 
-#### Multi-Agent Coordination
+#### Multi-Agent Coordination — *MultiAgent trait*
 
 - `` ``SubagentRunner`` ``
 - `` ``SubagentContext`` ``
@@ -172,13 +176,13 @@ Links to all guide articles and HOWTOs:
 - `` ``SharedMailbox`` ``
 - `` ``TeamMemory`` ``
 
-#### Plugins
+#### Plugins — *Plugins trait*
 
 - `` ``AgentPlugin`` ``
 - `` ``PluginManager`` ``
 - `` ``PluginContext`` ``
 
-#### Configuration
+#### Configuration — *Core trait*
 
 - `` ``ConfigurationResolver`` ``
 - `` ``ConfigurationSource`` ``
@@ -186,19 +190,19 @@ Links to all guide articles and HOWTOs:
 - `` ``FileConfigSource`` ``
 - `` ``MDMConfigSource`` ``
 
-#### System Prompt
+#### System Prompt — *Core trait*
 
 - `` ``SystemPromptBuilder`` ``
 - `` ``SystemPromptSection`` ``
 - `` ``SystemPromptProvider`` ``
 
-#### Caching
+#### Caching — *Core trait*
 
 - `` ``ToolResultCache`` ``
 - `` ``Cache`` ``
 - `` ``CachePolicy`` ``
 
-#### Testing
+#### Testing — *Core trait*
 
 - `` ``VCRClient`` ``
 - `` ``VCRError`` ``
@@ -206,7 +210,7 @@ Links to all guide articles and HOWTOs:
 - `` ``FileFixtureStore`` ``
 - `` ``FixtureMode`` ``
 
-#### Production Utilities
+#### Production Utilities — *Core trait (shutdown), Resilience trait (recovery)*
 
 - `` ``ShutdownRegistry`` ``
 - `` ``SignalHandler`` ``
@@ -216,7 +220,7 @@ Links to all guide articles and HOWTOs:
 - `` ``DefaultConversationRecoveryStrategy`` ``
 - `` ``recoverTranscript(_:strategy:)`` ``
 
-#### Skills
+#### Skills — *Core trait*
 
 - `` ``SkillStore`` ``
 - `` ``SkillSearchPath`` ``

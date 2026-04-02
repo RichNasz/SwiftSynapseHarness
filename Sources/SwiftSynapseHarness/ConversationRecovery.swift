@@ -3,6 +3,8 @@
 import Foundation
 import SwiftOpenResponsesDSL
 
+#if Resilience
+
 // MARK: - Integrity Violations
 
 /// A transcript integrity violation detected during consistency checking.
@@ -138,3 +140,5 @@ public func recoverTranscript(
     let repaired = strategy.repair(transcript: entries, violations: violations)
     return (entries: repaired, violations: violations)
 }
+
+#endif

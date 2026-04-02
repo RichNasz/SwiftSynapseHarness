@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if Core
 // MARK: - Agent Runtime
 
 /// Orchestrates agent lifecycle: status transitions, transcript management,
@@ -114,3 +115,4 @@ public func agentRun<A: AgentExecutable>(
 
     return result
 }
+#endif

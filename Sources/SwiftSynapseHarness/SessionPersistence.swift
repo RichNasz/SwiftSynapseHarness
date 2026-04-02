@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Persistence
+
 // MARK: - Session Metadata
 
 /// Lightweight summary of a saved session for listing without loading full transcripts.
@@ -145,3 +147,5 @@ public actor FileSessionStore: SessionStore {
         }
     }
 }
+
+#endif

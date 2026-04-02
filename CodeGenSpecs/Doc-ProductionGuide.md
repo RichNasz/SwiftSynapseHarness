@@ -20,9 +20,11 @@ Tagline: Capabilities that close the gap between a working agent and a deployed 
 
 Overview: Every capability in this guide is modular and opt-in. They integrate through established extension points (function parameters, hook events, telemetry) rather than requiring changes to your agent's `execute(goal:)`.
 
+Note: Each section below indicates which Package Trait is required. The default `Production` trait (Core + Hooks + Safety + Resilience + Observability) covers most sections. Features requiring `Persistence`, `MCP`, `MultiAgent`, or `Plugins` traits need explicit opt-in — add individual traits or use `traits: ["Full"]` to enable everything.
+
 ---
 
-### Section: Session Persistence
+### Section: Session Persistence — *Requires: Persistence trait*
 
 Pause and resume agent workflows across app launches:
 
@@ -49,7 +51,7 @@ Hook events: `.sessionSaved(sessionId:)`, `.sessionRestored(sessionId:)`.
 
 ---
 
-### Section: Guardrails
+### Section: Guardrails — *Requires: Safety trait (included in Production)*
 
 Input/output safety checks for content filtering and compliance:
 
@@ -89,7 +91,7 @@ struct ComplianceFilter: GuardrailPolicy {
 
 ---
 
-### Section: Tool Progress Streaming
+### Section: Tool Progress Streaming — *Requires: Core trait (included in Production)*
 
 Real-time feedback during long-running tool execution:
 
@@ -113,7 +115,7 @@ Progress updates flow to `ObservableTranscript.toolProgress` for SwiftUI binding
 
 ---
 
-### Section: MCP Integration
+### Section: MCP Integration — *Requires: MCP trait*
 
 Connect agents to external systems via the Model Context Protocol (JSON-RPC 2.0):
 
@@ -139,7 +141,7 @@ No external dependencies — Foundation covers stdio (`Process`), SSE (`URLSessi
 
 ---
 
-### Section: Advanced Context Compression
+### Section: Advanced Context Compression — *Requires: Resilience trait (included in Production)*
 
 Multiple compression strategies beyond the basic `SlidingWindowCompressor`:
 
@@ -169,7 +171,7 @@ try await AgentToolLoop.run(
 
 ---
 
-### Section: Configuration Hierarchy
+### Section: Configuration Hierarchy — *Requires: Core trait (included in Production)*
 
 7-level priority configuration for enterprise deployments:
 
@@ -194,7 +196,7 @@ let config = try await resolver.resolveConfiguration()
 
 ---
 
-### Section: Caching
+### Section: Caching — *Requires: Core trait (included in Production)*
 
 Generic caching with LRU eviction and TTL for tool results:
 
@@ -207,7 +209,7 @@ The underlying `Cache<Key, Value>` actor supports both `.lru` and `.fifo` evicti
 
 ---
 
-### Section: Denial Tracking
+### Section: Denial Tracking — *Requires: Safety trait (included in Production)*
 
 Adaptive permission behavior based on consecutive denials:
 
@@ -230,7 +232,7 @@ let adaptiveGate = AdaptivePermissionGate(
 
 ---
 
-### Section: Multi-Agent Coordination
+### Section: Multi-Agent Coordination — *Requires: MultiAgent trait*
 
 Dependency-aware multi-agent workflow execution:
 
@@ -251,7 +253,7 @@ The runner validates the dependency graph — `CoordinationError.unknownDependen
 
 ---
 
-### Section: Plugin System
+### Section: Plugin System — *Requires: Plugins trait*
 
 Modular extension mechanism — plugins register hooks, tools, and guardrails at activation:
 
@@ -278,7 +280,7 @@ Telemetry: `.pluginActivated(name:)`, `.pluginError(name:error:)`.
 
 ---
 
-### Section: Cost Tracking
+### Section: Cost Tracking — *Requires: Observability trait (included in Production)*
 
 Track per-session costs with per-model pricing:
 
@@ -297,7 +299,7 @@ let sink = CostTrackingTelemetrySink(tracker: tracker)
 
 ---
 
-### Section: Rate Limiting
+### Section: Rate Limiting — *Requires: Resilience trait (included in Production)*
 
 Rate-limit-aware retry with cooldown tracking, separate from general retry logic:
 
@@ -315,7 +317,7 @@ Checks cooldown before sending, parses Retry-After headers, enters cooldown on 4
 
 ---
 
-### Section: Semantic Error Classification
+### Section: Semantic Error Classification — *Requires: Resilience trait (included in Production)*
 
 Classify API and tool errors into semantic categories for structured handling:
 
@@ -336,7 +338,7 @@ default: break
 
 ---
 
-### Section: System Prompt Composition
+### Section: System Prompt Composition — *Requires: Core trait (included in Production)*
 
 Build system prompts from composable, prioritized sections:
 
@@ -355,7 +357,7 @@ Tools can co-locate prompt instructions via `SystemPromptProvider` conformance. 
 
 ---
 
-### Section: Tool Result Truncation
+### Section: Tool Result Truncation — *Requires: Core trait (included in Production)*
 
 Oversized tool results are automatically truncated before entering the transcript:
 
@@ -368,7 +370,7 @@ Applied automatically in `AgentToolLoop.run()` using `config.toolResultBudgetTok
 
 ---
 
-### Section: Agent Memory
+### Section: Agent Memory — *Requires: Persistence trait*
 
 Persistent cross-session memory distinct from session persistence and team memory:
 
@@ -389,7 +391,7 @@ Hook event: `.memoryUpdated(entry:)` fires when a memory entry is saved or updat
 
 ---
 
-### Section: Conversation Recovery
+### Section: Conversation Recovery — *Requires: Resilience trait (included in Production)*
 
 Validate and repair transcript integrity after interruptions or network failures:
 
@@ -427,7 +429,7 @@ Hook event: `.transcriptRepaired(violations:)` fires when repairs are applied.
 
 ---
 
-### Section: VCR Testing
+### Section: VCR Testing — *Requires: Core trait (included in Production)*
 
 Deterministic agent testing via request/response recording and replay:
 
@@ -444,7 +446,7 @@ let vcr = VCRClient(client: realClient, store: store, mode: .replay)
 
 ---
 
-### Section: Graceful Shutdown
+### Section: Graceful Shutdown — *Requires: Core trait (included in Production)*
 
 Coordinated resource cleanup on application termination:
 

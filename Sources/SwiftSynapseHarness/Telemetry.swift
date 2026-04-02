@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if Observability
 // MARK: - Telemetry Event
 
 /// A structured telemetry event emitted during agent execution.
@@ -87,3 +88,4 @@ public actor TokenUsageTracker {
         callCount = 0
     }
 }
+#endif

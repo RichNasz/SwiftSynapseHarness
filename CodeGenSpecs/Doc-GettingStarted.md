@@ -50,6 +50,30 @@ One import gives you the full harness, macros, and core types:
 import SwiftSynapseHarness
 ```
 
+#### Choosing Package Traits
+
+SwiftSynapseHarness uses SwiftPM Package Traits to let you include only the subsystems you need. By default, the `Production` trait is enabled — it includes Core, Hooks, Safety, Resilience, and Observability, which is everything most agents need. You don't have to do anything extra.
+
+If you want a minimal binary (just the tool loop and LLM client), specify `traits: ["Core"]`:
+
+```swift
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main", traits: ["Core"])
+```
+
+If you need everything (multi-agent coordination, session persistence, MCP, plugins), use `traits: ["Full"]`:
+
+```swift
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main", traits: ["Full"])
+```
+
+Or pick individual extras on top of Production:
+
+```swift
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main", traits: ["Production", "MCP", "Persistence"])
+```
+
+See the trait table in the README for all available traits and what each one enables.
+
 ---
 
 ### Step 2: Define Your First Tool

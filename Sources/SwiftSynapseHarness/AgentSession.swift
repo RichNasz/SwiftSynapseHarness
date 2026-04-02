@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Persistence
+
 /// A codable snapshot of agent state for session persistence and resume.
 ///
 /// Agents create `AgentSession` values via `currentSession()`.
@@ -97,3 +99,5 @@ public enum CodableTranscriptEntry: Codable, Sendable {
         }
     }
 }
+
+#endif

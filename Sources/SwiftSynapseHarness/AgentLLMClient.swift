@@ -7,6 +7,7 @@ import SwiftOpenResponsesDSL
 import FoundationModels
 #endif
 
+#if Core
 // MARK: - Backend-Agnostic Types
 
 /// A backend-agnostic prompt representation.
@@ -351,3 +352,4 @@ extension AgentConfiguration {
         return try LLMClient(baseURL: url, apiKey: apiKey ?? "")
     }
 }
+#endif

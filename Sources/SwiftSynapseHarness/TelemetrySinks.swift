@@ -3,6 +3,8 @@
 import Foundation
 import os
 
+#if Observability
+
 // MARK: - OS Log Sink
 
 /// Logs telemetry events to the unified logging system (os_log).
@@ -92,3 +94,5 @@ public struct CompositeTelemetrySink: TelemetrySink {
         }
     }
 }
+
+#endif

@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Persistence
+
 // MARK: - Memory Category
 
 /// Categories for organizing agent memory entries.
@@ -175,3 +177,5 @@ public actor FileMemoryStore: MemoryStore {
         }
     }
 }
+
+#endif

@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if MultiAgent
+
 // MARK: - Shared Mailbox
 
 /// Cross-agent asynchronous message passing for coordinated workflows.
@@ -244,3 +246,5 @@ public enum CoordinationError: Error, Sendable {
     /// The dependency graph contains a cycle.
     case cyclicDependency(phases: [String])
 }
+
+#endif

@@ -49,6 +49,39 @@ dependencies: [
 
 Add `"SwiftSynapseHarness"` to your target's dependencies. This re-exports `SwiftSynapseMacrosClient`, so you get macros and core types automatically.
 
+## Package Traits
+
+SwiftSynapseHarness uses SwiftPM Package Traits for modular feature selection. The default `Production` trait includes everything most agents need. Pick exactly the subsystems you want:
+
+| Trait | What it enables | Default? |
+|-------|----------------|----------|
+| `Core` | AgentToolProtocol, ToolRegistry, AgentToolLoop, streaming, config, LLM client | No |
+| `Hooks` | HookPipeline + 16 event types + closure hooks | No |
+| `Safety` | Permissions + Guardrails + Denial tracking | No |
+| `Resilience` | RecoveryChain + strategies + compaction + rate limiting | No |
+| `Observability` | Telemetry sinks, CostTracker, error classification | No |
+| `MultiAgent` | CoordinationRunner + phases + subagent spawning | No |
+| `Persistence` | FileSessionStore + session lifecycle + agent memory | No |
+| `MCP` | MCPManager + external tool servers | No |
+| `Plugins` | AgentPlugin system + lifecycle | No |
+| `Production` | Core + Hooks + Safety + Resilience + Observability | **Yes** |
+| `Advanced` | Production + MultiAgent + Persistence + MCP + Plugins | No |
+| `Full` | Everything | No |
+
+```swift
+// Minimal agent (smallest binary):
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main", traits: ["Core"])
+
+// Default — zero config (most users):
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main")
+
+// Production + specific extras:
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main", traits: ["Production", "MCP", "Persistence"])
+
+// Everything:
+.package(url: "https://github.com/RichNasz/SwiftSynapseHarness", branch: "main", traits: ["Full"])
+```
+
 ## Quick Start
 
 ```swift

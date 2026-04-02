@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Observability
+
 // MARK: - Model Pricing
 
 /// Per-model token pricing for cost calculation.
@@ -240,3 +242,5 @@ public struct CostTrackingTelemetrySink: TelemetrySink {
         }
     }
 }
+
+#endif

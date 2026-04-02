@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 /// Default predicate for transport-level retryable errors.
 ///
 /// Returns `true` for transient network conditions that may resolve on retry.
@@ -53,3 +55,5 @@ public func retryWithBackoff<T: Sendable>(
     }
     throw lastError!
 }
+
+#endif

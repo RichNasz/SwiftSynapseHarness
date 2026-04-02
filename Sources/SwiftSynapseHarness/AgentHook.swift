@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if Hooks
 // MARK: - Hook Event Kinds (for subscription filtering)
 
 /// Lightweight enum for subscription filtering without matching associated values.
@@ -131,3 +132,4 @@ public struct ClosureHook: AgentHook {
         await handler(event)
     }
 }
+#endif

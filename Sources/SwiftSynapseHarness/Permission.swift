@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Safety
+
 // MARK: - Permission Decision
 
 /// The result of evaluating a tool permission policy.
@@ -124,3 +126,5 @@ public enum PermissionError: Error, Sendable {
     /// The approval delegate rejected the tool call.
     case rejected(tool: String)
 }
+
+#endif

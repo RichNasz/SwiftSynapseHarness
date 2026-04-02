@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if MCP
+
 // MARK: - MCP Message (JSON-RPC 2.0)
 
 /// A JSON-RPC 2.0 message used by the Model Context Protocol.
@@ -561,3 +563,5 @@ public actor MCPManager {
         bridges.removeAll()
     }
 }
+
+#endif

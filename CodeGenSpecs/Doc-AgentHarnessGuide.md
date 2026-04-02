@@ -20,9 +20,11 @@ Tagline: The runtime infrastructure between your `execute(goal:)` and a working 
 
 Overview prose: The agent harness provides everything an agent needs at runtime. Each component is opt-in and composes naturally through function parameters — no subclassing, no protocol witnesses, no configuration objects.
 
+Note: Each section below indicates which Package Trait is required. All sections here are included in the default `Production` trait except Subagent Composition (requires `MultiAgent`). See `<doc:GettingStarted>` for how to select traits.
+
 ---
 
-### Section: Typed Tool System
+### Section: Typed Tool System — *Requires: Core trait (included in Production)*
 
 Introduce `AgentToolProtocol` with typed `Input`/`Output`:
 
@@ -142,7 +144,7 @@ Properties:
 
 ---
 
-### Section: Hook System
+### Section: Hook System — *Requires: Hooks trait (included in Production)*
 
 Intercept all 16 event types without modifying agent code.
 
@@ -191,7 +193,7 @@ The pipeline uses first-block-wins semantics — if any hook returns `.block`, t
 
 ---
 
-### Section: Permission System
+### Section: Permission System — *Requires: Safety trait (included in Production)*
 
 Policy-driven tool access control with human-in-the-loop approval:
 
@@ -232,7 +234,7 @@ let adaptiveGate = AdaptivePermissionGate(
 
 ---
 
-### Section: Recovery Strategies
+### Section: Recovery Strategies — *Requires: Resilience trait (included in Production)*
 
 Self-healing from context window exhaustion and output truncation:
 
@@ -251,7 +253,7 @@ let recovery = RecoveryChain.default
 
 ---
 
-### Section: Context Budget
+### Section: Context Budget — *Requires: Core trait (included in Production)*
 
 Track token usage and trigger compaction:
 
@@ -267,7 +269,7 @@ var budget = ContextBudget(maxTokens: 128_000)
 
 ---
 
-### Section: LLM Backend Abstraction
+### Section: LLM Backend Abstraction — *Requires: Core trait (included in Production)*
 
 Three backends behind one protocol:
 
@@ -287,7 +289,7 @@ public protocol AgentLLMClient: Sendable {
 
 ---
 
-### Section: Subagent Composition
+### Section: Subagent Composition — *Requires: MultiAgent trait*
 
 Run child agents with shared or independent lifecycles:
 
@@ -316,7 +318,7 @@ let results = try await SubagentRunner.runParallel(
 
 ---
 
-### Section: Telemetry
+### Section: Telemetry — *Requires: Observability trait (included in Production)*
 
 Structured event emission to any backend:
 
@@ -331,7 +333,7 @@ let telemetry = CompositeTelemetrySink([
 
 ---
 
-### Section: Retry
+### Section: Retry — *Requires: Core trait (included in Production)*
 
 Exponential backoff for transient failures:
 
@@ -345,7 +347,7 @@ Base delay 500ms, doubles per attempt. `isTransportRetryable()` provides a defau
 
 ---
 
-### Section: Skills Integration
+### Section: Skills Integration — *Requires: Core trait (included in Production)*
 
 SwiftSynapseHarness re-exports SwiftOpenSkills types so skills are available with one import:
 

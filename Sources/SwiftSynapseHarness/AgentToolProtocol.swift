@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if Core
+
 // MARK: - Tool Protocol
 
 /// A typed, self-describing tool that an agent can invoke.
@@ -217,3 +219,5 @@ struct AnyAgentTool: Sendable {
         try await _executeWithProgress(arguments, callId, progress)
     }
 }
+
+#endif

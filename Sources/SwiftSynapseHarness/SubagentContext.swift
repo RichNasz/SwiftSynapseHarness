@@ -2,6 +2,8 @@
 
 import Foundation
 
+#if MultiAgent
+
 // MARK: - Subagent Context
 
 /// Configuration inherited by child agents spawned from a parent.
@@ -237,3 +239,5 @@ public enum SubagentRunner {
         }
     }
 }
+
+#endif
