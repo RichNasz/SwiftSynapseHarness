@@ -21,13 +21,16 @@ Designed for **business agents** — customer support, data processing, workflow
 
 The full documentation is available as DocC via two paths:
 
-**[Browse on GitHub Pages](https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseharness/)** — no Xcode required. Deployed automatically on push to `main`.
+**GitHub Pages** — no Xcode required. Both deployed automatically on push to `main`.
+
+- **[SwiftSynapseHarness](https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseharness/)** — core harness, tools, hooks, permissions, recovery, MCP, coordination, plugins, and all production capabilities
+- **[SwiftSynapseUI](https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseui/)** — drop-in SwiftUI views and App Intents for any `ObservableAgent`
 
 **Xcode Developer Documentation** — richest experience during development:
 
 1. Open this project (or any project that depends on it) in Xcode.
 2. Choose **Product > Build Documentation** (or open the Documentation window).
-3. Navigate to **SwiftSynapseHarness** in the documentation navigator.
+3. Navigate to **SwiftSynapseHarness** or **SwiftSynapseUI** in the documentation navigator.
 
 Both paths cover all guides and API reference. The README covers installation and orientation only.
 

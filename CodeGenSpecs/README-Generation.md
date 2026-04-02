@@ -31,14 +31,17 @@ This section appears immediately after the Overview (before Requirements).
 The full documentation is available as DocC via two paths:
 
 **GitHub Pages (easiest — no Xcode required):**
-`https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseharness/`
-Deployed automatically on push to `main`.
+
+- [`SwiftSynapseHarness`](https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseharness/) — core harness, tools, hooks, permissions, recovery, MCP, coordination, plugins, and all production capabilities
+- [`SwiftSynapseUI`](https://richnasz.github.io/SwiftSynapseHarness/documentation/swiftsynapseui/) — drop-in SwiftUI views and App Intents for any `ObservableAgent`
+
+Both deployed automatically on push to `main`.
 
 **Xcode Developer Documentation (richest experience during development):**
 
 1. Open this project (or any project that depends on it) in Xcode.
 2. Choose **Product > Build Documentation** (or open the Documentation window).
-3. Navigate to **SwiftSynapseHarness** in the documentation navigator.
+3. Navigate to **SwiftSynapseHarness** or **SwiftSynapseUI** in the documentation navigator.
 
 Both paths cover all guides and API reference. The README covers installation and orientation only; the DocC documentation covers usage in depth.
 
