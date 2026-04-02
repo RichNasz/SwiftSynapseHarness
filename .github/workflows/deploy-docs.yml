@@ -27,12 +27,20 @@ jobs:
 
       - name: Generate DocC static site
         run: |
+          # Generate both targets — each lands in its own .doccarchive subdirectory
           swift package --disable-sandbox generate-documentation \
             --target SwiftSynapseHarness \
             --target SwiftSynapseUI \
             --transform-for-static-hosting \
             --hosting-base-path SwiftSynapseHarness \
-            --output-path ./docs
+            --output-path ./docc-archives
+
+          # Merge the two archives into a flat static site at ./docs/
+          # SwiftSynapseUI first, SwiftSynapseHarness last so its index.html
+          # (the primary redirect) becomes the site root.
+          mkdir -p ./docs
+          rsync -a ./docc-archives/SwiftSynapseUI.doccarchive/ ./docs/
+          rsync -a ./docc-archives/SwiftSynapseHarness.doccarchive/ ./docs/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
