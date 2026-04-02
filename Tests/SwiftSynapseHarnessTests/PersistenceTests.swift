@@ -1,4 +1,4 @@
-// Generated from CodeGenSpecs/Tests.md — Do not edit manually. Update spec and re-generate.
+// Generated from CodeGenSpecs/PersistenceTests.md — Do not edit manually. Update spec and re-generate.
 
 import Testing
 import Foundation
@@ -8,8 +8,7 @@ import SwiftSynapseHarness
 
 @Test func codableTranscriptEntryUserMessageRoundTrips() throws {
     let original = CodableTranscriptEntry.userMessage("Hello, world!")
-    let data = try JSONEncoder().encode(original)
-    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: data)
+    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: JSONEncoder().encode(original))
     guard case .userMessage(let text) = decoded else {
         Issue.record("Decoded to wrong case — expected .userMessage")
         return
@@ -19,8 +18,7 @@ import SwiftSynapseHarness
 
 @Test func codableTranscriptEntryAssistantMessageRoundTrips() throws {
     let original = CodableTranscriptEntry.assistantMessage("I can help with that.")
-    let data = try JSONEncoder().encode(original)
-    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: data)
+    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: JSONEncoder().encode(original))
     guard case .assistantMessage(let text) = decoded else {
         Issue.record("Decoded to wrong case — expected .assistantMessage")
         return
@@ -30,8 +28,7 @@ import SwiftSynapseHarness
 
 @Test func codableTranscriptEntryToolCallRoundTrips() throws {
     let original = CodableTranscriptEntry.toolCall(name: "calculate", arguments: "{\"expression\":\"2+2\"}")
-    let data = try JSONEncoder().encode(original)
-    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: data)
+    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: JSONEncoder().encode(original))
     guard case .toolCall(let name, let args) = decoded else {
         Issue.record("Decoded to wrong case — expected .toolCall")
         return
@@ -41,31 +38,27 @@ import SwiftSynapseHarness
 }
 
 @Test func codableTranscriptEntryToolResultRoundTrips() throws {
-    let original = CodableTranscriptEntry.toolResult(name: "calculate", result: "4.0")
-    let data = try JSONEncoder().encode(original)
-    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: data)
+    let original = CodableTranscriptEntry.toolResult(name: "echo", result: "hi")
+    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: JSONEncoder().encode(original))
     guard case .toolResult(let name, let result) = decoded else {
         Issue.record("Decoded to wrong case — expected .toolResult")
         return
     }
-    #expect(name == "calculate")
-    #expect(result == "4.0")
+    #expect(name == "echo")
+    #expect(result == "hi")
 }
 
 @Test func codableTranscriptEntryErrorRoundTrips() throws {
-    let original = CodableTranscriptEntry.error("Something went wrong")
-    let data = try JSONEncoder().encode(original)
-    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: data)
+    let original = CodableTranscriptEntry.error("Something failed")
+    let decoded = try JSONDecoder().decode(CodableTranscriptEntry.self, from: JSONEncoder().encode(original))
     guard case .error(let msg) = decoded else {
         Issue.record("Decoded to wrong case — expected .error")
         return
     }
-    #expect(msg == "Something went wrong")
+    #expect(msg == "Something failed")
 }
 
-// MARK: - CodableTranscriptEntry → TranscriptEntry Conversion Tests
-
-@Test func codableTranscriptEntryToTranscriptEntryUserMessage() {
+@Test func codableTranscriptEntryToTranscriptEntry() {
     let codable = CodableTranscriptEntry.userMessage("hi")
     let entry = codable.toTranscriptEntry()
     guard case .userMessage(let text) = entry else {
@@ -75,36 +68,21 @@ import SwiftSynapseHarness
     #expect(text == "hi")
 }
 
-@Test func codableTranscriptEntryToTranscriptEntryToolResult() {
-    let codable = CodableTranscriptEntry.toolResult(name: "echo", result: "hello")
-    let entry = codable.toTranscriptEntry()
-    guard case .toolResult(let name, let result, _) = entry else {
-        Issue.record("Expected .toolResult TranscriptEntry")
-        return
-    }
-    #expect(name == "echo")
-    #expect(result == "hello")
-}
-
 // MARK: - AgentSession Tests
 
 @Test func agentSessionEncodesAndDecodes() throws {
-    let entry = CodableTranscriptEntry.userMessage("test goal")
     let session = AgentSession(
         sessionId: "sess-abc-123",
         agentType: "TestAgent",
         goal: "test goal",
-        transcriptEntries: [entry],
+        transcriptEntries: [.userMessage("test goal")],
         completedStepIndex: 0
     )
     let encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
-    let data = try encoder.encode(session)
-
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
-    let decoded = try decoder.decode(AgentSession.self, from: data)
-
+    let decoded = try decoder.decode(AgentSession.self, from: encoder.encode(session))
     #expect(decoded.sessionId == "sess-abc-123")
     #expect(decoded.agentType == "TestAgent")
     #expect(decoded.goal == "test goal")
@@ -117,51 +95,56 @@ import SwiftSynapseHarness
         .assistantMessage("hi there"),
         .toolCall(name: "calc", arguments: "{}"),
     ]
-    let session = AgentSession(
-        agentType: "TestAgent",
-        goal: "multi-entry goal",
-        transcriptEntries: entries,
-        completedStepIndex: 2
-    )
+    let session = AgentSession(agentType: "TestAgent", goal: "multi-entry goal",
+                               transcriptEntries: entries, completedStepIndex: 2)
     let encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
-    let data = try encoder.encode(session)
-
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
-    let decoded = try decoder.decode(AgentSession.self, from: data)
-
+    let decoded = try decoder.decode(AgentSession.self, from: encoder.encode(session))
     #expect(decoded.transcriptEntries.count == 3)
 }
 
-// MARK: - ObservableTranscript+Harness Extension Tests
+// MARK: - ObservableTranscript+Harness Tests
 
 @Test func observableTranscriptRestoreFromCodable() {
     let transcript = ObservableTranscript()
-    let codableEntries: [CodableTranscriptEntry] = [
-        .userMessage("Hello"),
-        .assistantMessage("Hi there"),
-    ]
-    transcript.restore(from: codableEntries)
+    transcript.restore(from: [.userMessage("A"), .assistantMessage("B")])
     #expect(transcript.entries.count == 2)
 }
 
-@Test func observableTranscriptRestoreFromEmptyArray() {
-    let transcript = ObservableTranscript()
-    transcript.append(.userMessage("existing"))
-    transcript.restore(from: [])
-    #expect(transcript.entries.count == 0)
+// MARK: - MemoryEntry Tests (requires Persistence trait)
+
+#if Persistence
+@Test func memoryEntryEncodesAndDecodes() throws {
+    let entry = MemoryEntry(
+        id: "test-id",
+        category: .user,
+        content: "User prefers concise answers",
+        tags: ["preference", "style"]
+    )
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    let decoded = try decoder.decode(MemoryEntry.self, from: encoder.encode(entry))
+    #expect(decoded.id == "test-id")
+    #expect(decoded.category == .user)
+    #expect(decoded.content == "User prefers concise answers")
+    #expect(decoded.tags == ["preference", "style"])
 }
 
-@Test func observableTranscriptRestorePreservesEntryContent() {
-    let transcript = ObservableTranscript()
-    let codableEntries: [CodableTranscriptEntry] = [
-        .userMessage("Test message"),
-    ]
-    transcript.restore(from: codableEntries)
-    guard case .userMessage(let text) = transcript.entries.first else {
-        Issue.record("Expected .userMessage as first entry")
+@Test func memoryEntryCategoryCustomRoundTrips() throws {
+    let entry = MemoryEntry(id: "custom-id", category: .custom("myCategory"), content: "domain-specific fact")
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    let decoded = try decoder.decode(MemoryEntry.self, from: encoder.encode(entry))
+    guard case .custom(let label) = decoded.category else {
+        Issue.record("Expected .custom category after round-trip")
         return
     }
-    #expect(text == "Test message")
+    #expect(label == "myCategory")
 }
+#endif

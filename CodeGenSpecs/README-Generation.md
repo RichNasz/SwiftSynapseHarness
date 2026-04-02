@@ -20,7 +20,7 @@ The README is the primary documentation surface for SwiftSynapseHarness on GitHu
 9. Dependencies
 10. Spec-driven development note
 11. Contributing — one sentence with link to CONTRIBUTING.md
-12. License — one sentence Apache 2.0 statement
+12. License — one sentence MIT License statement
 
 ## Section: Documentation
 
@@ -59,7 +59,7 @@ Both paths cover all guides and API reference. The README covers installation an
 These appear at the bottom of the README, after the Spec-Driven Development note.
 
 - **Contributing**: One sentence linking to `CONTRIBUTING.md`. Example: "Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the spec-first workflow, commit conventions, and PR standards."
-- **License**: One sentence stating the license. Example: "SwiftSynapseHarness is available under the Apache License 2.0."
+- **License**: One sentence stating the license. Example: "SwiftSynapseHarness is available under the MIT License."
 
 ---
 

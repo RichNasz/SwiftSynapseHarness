@@ -1,4 +1,4 @@
-// Generated from CodeGenSpecs — Do not edit manually. Update spec and re-generate.
+// Generated from CodeGenSpecs/Hooks.md — Do not edit manually. Update spec and re-generate.
 
 #if Hooks
 /// Manages an ordered list of hooks and fires events through them.

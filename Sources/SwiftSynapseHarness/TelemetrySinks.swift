@@ -1,4 +1,4 @@
-// Generated from CodeGenSpecs — Do not edit manually. Update spec and re-generate.
+// Generated from CodeGenSpecs/Observability.md — Do not edit manually. Update spec and re-generate.
 
 import Foundation
 import os

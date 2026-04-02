@@ -1,4 +1,4 @@
-// Generated from CodeGenSpecs/Shared-Session-Resume.md — Do not edit manually. Update spec and re-generate.
+// Generated from CodeGenSpecs/Persistence.md — Do not edit manually. Update spec and re-generate.
 
 import Foundation
 

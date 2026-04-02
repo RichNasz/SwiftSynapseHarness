@@ -301,4 +301,4 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the spec-f
 
 ## License
 
-SwiftSynapseHarness is available under the Apache License 2.0.
+SwiftSynapseHarness is available under the MIT License.

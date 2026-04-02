@@ -1,4 +1,4 @@
-// Generated from CodeGenSpecs/Shared-Foundation-Models.md — Do not edit manually. Update spec and re-generate.
+// Generated from CodeGenSpecs/Core.md — Do not edit manually. Update spec and re-generate.
 
 import Foundation
 import SwiftOpenResponsesDSL
