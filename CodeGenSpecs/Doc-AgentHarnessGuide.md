@@ -1,14 +1,30 @@
-# Agent Harness Guide
+# Doc-AgentHarnessGuide
 
-The runtime infrastructure between your `execute(goal:)` and a working agent — typed tools, hooks, permissions, streaming, recovery, and subagents.
+## Purpose
 
-## Overview
+Specifies the complete Agent Harness Guide — the authoritative reference for core harness runtime capabilities. This replaces the existing `AgentHarnessGuide.md`, filling in gaps: all 16 hook events, adaptive permissions, skills integration, and `StreamingToolExecutor`.
 
-The agent harness provides everything an agent needs at runtime. Each component is opt-in and composes naturally through function parameters — no subclassing, no protocol witnesses, no configuration objects.
+## Generates
 
-## Typed Tool System
+- `Sources/SwiftSynapseHarness/SwiftSynapseHarness.docc/AgentHarnessGuide.md`
 
-Tools conform to ``AgentToolProtocol`` with typed `Input` and `Output`:
+---
+
+## Article Structure
+
+### Title & Overview
+
+Title: `Agent Harness Guide`
+
+Tagline: The runtime infrastructure between your `execute(goal:)` and a working agent — typed tools, hooks, permissions, streaming, recovery, and subagents.
+
+Overview prose: The agent harness provides everything an agent needs at runtime. Each component is opt-in and composes naturally through function parameters — no subclassing, no protocol witnesses, no configuration objects.
+
+---
+
+### Section: Typed Tool System
+
+Introduce `AgentToolProtocol` with typed `Input`/`Output`:
 
 ```swift
 public protocol AgentToolProtocol: Sendable {
@@ -22,7 +38,7 @@ public protocol AgentToolProtocol: Sendable {
 }
 ```
 
-Register tools in a ``ToolRegistry`` and dispatch by name:
+Show registering and dispatching tools via `ToolRegistry`:
 
 ```swift
 let tools = ToolRegistry()
@@ -36,11 +52,13 @@ let result = try await tools.dispatch(name: "calculate", callId: "1", arguments:
 let results = try await tools.dispatchBatch(calls)
 ```
 
-`AnyAgentTool` handles type erasure internally. String outputs bypass JSON encoding to avoid double-quoting.
+Explain: `AnyAgentTool` handles type erasure internally. String outputs bypass JSON encoding to avoid double-quoting.
 
-Set `isConcurrencySafe = true` on stateless tools to enable parallel execution with other safe tools during streaming.
+Mark `isConcurrencySafe = true` on tools with no shared mutable state to enable parallel execution.
 
-## AgentToolLoop
+---
+
+### Section: AgentToolLoop
 
 The reusable tool dispatch loop handles the complete LLM conversation cycle:
 
@@ -66,13 +84,19 @@ let result = try await AgentToolLoop.run(
 
 Each iteration: check cancellation → compact if needed → build request → fire hooks → send to LLM → track tokens → dispatch tools → record results → check budget.
 
-### Streaming Variant
+#### Streaming Variant
 
 `AgentToolLoop.runStreaming()` dispatches concurrency-safe tools as their definitions complete in the LLM stream. Text deltas are forwarded to `ObservableTranscript` for real-time SwiftUI updates.
 
-## StreamingToolExecutor
+---
 
-``StreamingToolExecutor`` manages concurrent tool execution during streaming responses. It is used internally by `AgentToolLoop.runStreaming()` but is also available standalone:
+### Section: StreamingToolExecutor
+
+`StreamingToolExecutor` manages concurrent tool execution during streaming responses:
+
+- Concurrency-safe tools (`isConcurrencySafe == true`) start immediately as calls arrive
+- Unsafe tools are queued and dispatched sequentially after all safe tools finish
+- Used internally by `AgentToolLoop.runStreaming()`, but also available standalone
 
 ```swift
 let executor = StreamingToolExecutor(tools: registry, hooks: hooks, telemetry: telemetry)
@@ -84,14 +108,16 @@ executor.enqueue(toolCall)
 let results = try await executor.awaitAll()
 ```
 
-**Execution rules:**
-- Concurrency-safe tools (`isConcurrencySafe == true`) start executing immediately when enqueued
-- Unsafe tools are queued and dispatched sequentially after all safe tools complete
+Properties:
 - `hasTools: Bool` — whether any tools have been enqueued
 
-## Hook System
+---
 
-Intercept all 16 event types without modifying agent code:
+### Section: Hook System
+
+Intercept all 16 event types without modifying agent code.
+
+Show table of all 16 events:
 
 | Event | When it fires |
 |-------|---------------|
@@ -112,13 +138,13 @@ Intercept all 16 event types without modifying agent code:
 | `memoryUpdated` | A memory entry was saved or updated |
 | `transcriptRepaired` | Transcript integrity violations were repaired |
 
-### Hook Actions
+#### Hook Actions
 
 - `.proceed` — continue normally
 - `.modify(String)` — replace input/output
 - `.block(reason:)` — abort the operation
 
-### Quick Setup
+#### Quick Setup
 
 ```swift
 let hooks = AgentHookPipeline()
@@ -134,7 +160,9 @@ await hooks.add(auditHook)
 
 The pipeline uses first-block-wins semantics — if any hook returns `.block`, the operation is aborted.
 
-## Permission System
+---
+
+### Section: Permission System
 
 Policy-driven tool access control with human-in-the-loop approval:
 
@@ -150,11 +178,11 @@ await gate.setApprovalDelegate(myDelegate)
 tools.permissionGate = gate
 ```
 
-Policies evaluate in order with most-restrictive-wins semantics. For `.requiresApproval`, the gate calls your ``ApprovalDelegate`` for a human decision.
+Policies evaluate in order with most-restrictive-wins semantics. For `.requiresApproval`, the gate calls your `ApprovalDelegate` for a human decision.
 
-### Adaptive Permission Gate
+#### Adaptive Permission Gate
 
-``AdaptivePermissionGate`` wraps a base ``PermissionGate`` and switches permission modes automatically after repeated denials:
+`AdaptivePermissionGate` wraps a base `PermissionGate` and tracks consecutive denials. When the denial threshold is reached, it can switch permission modes automatically:
 
 ```swift
 let adaptiveGate = AdaptivePermissionGate(
@@ -171,26 +199,30 @@ let adaptiveGate = AdaptivePermissionGate(
 | `.alwaysPrompt` | Force approval for every tool call |
 | `.planOnly` | Block all tools, explain what would have been called |
 
-``DenialTracker`` records consecutive denials per session. Access it via `adaptiveGate.denialTracker` to read the count or reset it manually.
+`DenialTracker` is the underlying actor tracking consecutive denials per session. Access it via `adaptiveGate.denialTracker` to read the denial count or reset it.
 
-## Recovery Strategies
+---
+
+### Section: Recovery Strategies
 
 Self-healing from context window exhaustion and output truncation:
 
 | Strategy | Recovers from |
 |----------|--------------|
-| ``ReactiveCompactionStrategy`` | Context window exceeded — compresses transcript |
-| ``OutputTokenEscalationStrategy`` | Output truncated — increases max tokens |
-| ``ContinuationStrategy`` | Output truncated — sends continuation prompt |
+| `ReactiveCompactionStrategy` | Context window exceeded — compresses transcript |
+| `OutputTokenEscalationStrategy` | Output truncated — increases max tokens |
+| `ContinuationStrategy` | Output truncated — sends continuation prompt |
 
-Chain them with ``RecoveryChain``:
+Chain them with `RecoveryChain`:
 
 ```swift
 let recovery = RecoveryChain.default
 // Tries: Compaction → Escalation → Continuation (first success wins)
 ```
 
-## Context Budget
+---
+
+### Section: Context Budget
 
 Track token usage and trigger compaction:
 
@@ -200,11 +232,13 @@ var budget = ContextBudget(maxTokens: 128_000)
 // When budget.utilizationPercentage exceeds threshold, compaction fires
 ```
 
-### Transcript Compression
+#### Transcript Compression
 
-``TranscriptCompressor`` protocol with built-in ``SlidingWindowCompressor`` (keeps last N entries + summary). See <doc:ProductionGuide> for advanced compressors.
+`TranscriptCompressor` protocol with built-in strategies. `SlidingWindowCompressor` keeps the last N entries plus a summary. See `<doc:ProductionGuide>` for advanced compressors.
 
-## LLM Backend Abstraction
+---
+
+### Section: LLM Backend Abstraction
 
 Three backends behind one protocol:
 
@@ -217,12 +251,14 @@ public protocol AgentLLMClient: Sendable {
 
 | Backend | Implementation |
 |---------|---------------|
-| ``CloudLLMClient`` | Wraps SwiftOpenResponsesDSL for any OpenAI-compatible endpoint |
-| ``HybridLLMClient`` | Foundation Models on-device first, cloud fallback |
+| `CloudLLMClient` | Wraps SwiftOpenResponsesDSL for any OpenAI-compatible endpoint |
+| `HybridLLMClient` | Foundation Models on-device first, cloud fallback |
 
 `AgentConfiguration.buildClient()` selects the backend based on `executionMode`.
 
-## Subagent Composition
+---
+
+### Section: Subagent Composition
 
 Run child agents with shared or independent lifecycles:
 
@@ -249,7 +285,9 @@ let results = try await SubagentRunner.runParallel(
 )
 ```
 
-## Telemetry
+---
+
+### Section: Telemetry
 
 Structured event emission to any backend:
 
@@ -260,9 +298,11 @@ let telemetry = CompositeTelemetrySink([
 ])
 ```
 
-12 event types emitted automatically: agent lifecycle, LLM calls (model, tokens, duration), tool calls (name, duration, success), retries, budget exhaustion, guardrail triggers, context compaction, and plugin lifecycle events.
+12 event types emitted automatically: agent lifecycle, LLM calls (model, tokens, duration), tool calls (name, duration, success), retries, budget exhaustion, guardrail triggers, context compaction, plugin lifecycle.
 
-## Retry
+---
+
+### Section: Retry
 
 Exponential backoff for transient failures:
 
@@ -274,16 +314,29 @@ let result = try await retryWithBackoff(maxAttempts: 3) {
 
 Base delay 500ms, doubles per attempt. `isTransportRetryable()` provides a default predicate for network errors.
 
-## Skills Integration
+---
 
-SwiftSynapseHarness re-exports SwiftOpenSkills types so skills are available with a single import:
+### Section: Skills Integration
+
+SwiftSynapseHarness re-exports SwiftOpenSkills types so skills are available with one import:
 
 ```swift
 import SwiftSynapseHarness
 
-// Skills types available directly — no additional import needed:
+// Skills types available directly:
 // SkillStore, SkillSearchPath, Skill
 // SkillsAgent, Skills (when SwiftOpenSkillsResponses is available)
 ```
 
-Use ``SkillStore`` to manage a collection of skills and ``SkillSearchPath`` to configure discovery locations on disk.
+`SkillStore` manages a collection of skills. `SkillSearchPath` configures where skills are discovered on disk. Use `SkillsAgent` (from SwiftOpenSkillsResponses) to run agents with skill awareness.
+
+---
+
+## Implementation Notes for Generator
+
+- All 16 hook events must appear in the table — no omissions
+- `StreamingToolExecutor` section is new — was not in previous guide
+- `AdaptivePermissionGate` + `DenialTracker` section is new
+- Skills section is new
+- Use `` ``TypeName`` `` for all type cross-references
+- Use `<doc:ProductionGuide>` when referencing production guide content

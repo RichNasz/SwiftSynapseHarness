@@ -14,6 +14,18 @@ This directory contains the specifications that serve as the single source of tr
 | [Client-ProductionPolish.md](Client-ProductionPolish.md) | `CostTracking.swift`, `ErrorClassification.swift`, `ResultTruncation.swift`, `RateLimiting.swift`, `SystemPromptBuilder.swift`, `TestFixtures.swift`, `GracefulShutdown.swift`, `AgentMemory.swift`, `ConversationRecovery.swift` |
 | [UI.md](UI.md) | `Sources/SwiftSynapseUI/ObservableAgent.swift`, `AgentAppIntent.swift`, `AgentStatusView.swift`, `AgentChatView.swift`, `TranscriptView.swift`, `StreamingTextView.swift`, `ToolCallDetailView.swift` |
 | [Tests.md](Tests.md) | `Tests/SwiftSynapseHarnessTests/AgentConfigurationTests.swift`, `RetryAndContextTests.swift`, `ToolSystemTests.swift`, `SessionAndTranscriptTests.swift`, `HooksAndGuardrailsTests.swift`, `ProductionPolishTests.swift`, `AgentRuntimeTests.swift` |
+| [Shared-Skills.md](Shared-Skills.md) | `Sources/SwiftSynapseHarness/SkillsSupport.swift` |
+
+## Documentation Spec Files
+
+| Spec | Generates |
+|------|-----------|
+| [Doc-HarnessCatalog.md](Doc-HarnessCatalog.md) | `Sources/SwiftSynapseHarness/SwiftSynapseHarness.docc/SwiftSynapseHarness.md` |
+| [Doc-GettingStarted.md](Doc-GettingStarted.md) | `Sources/SwiftSynapseHarness/SwiftSynapseHarness.docc/GettingStarted.md` |
+| [Doc-AgentHarnessGuide.md](Doc-AgentHarnessGuide.md) | `Sources/SwiftSynapseHarness/SwiftSynapseHarness.docc/AgentHarnessGuide.md` |
+| [Doc-ProductionGuide.md](Doc-ProductionGuide.md) | `Sources/SwiftSynapseHarness/SwiftSynapseHarness.docc/ProductionGuide.md` |
+| [Doc-HOWTOs.md](Doc-HOWTOs.md) | `Sources/SwiftSynapseHarness/SwiftSynapseHarness.docc/HowToAddTools.md`, `HowToConfigurePermissions.md`, `HowToGoToProduction.md`, `HowToMultiAgent.md`, `HowToTestAgents.md` |
+| [Doc-SwiftSynapseUI.md](Doc-SwiftSynapseUI.md) | `Sources/SwiftSynapseUI/SwiftSynapseUI.docc/SwiftSynapseUI.md`, `UIGuide.md` |
 
 ## Infrastructure Files
 
